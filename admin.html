@@ -1,39 +1,75 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const grid = document.getElementById('projectsGrid');
-    
-    // لینک Google Sheet خودت رو اینجا بذار (فقط ID شیت)
-    const SHEET_ID = "1aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890"; // ← عوض کن!
-    const API_KEY = "AIzaSyBwN8k9o3j8s0vY8z8v8z8v8z8v8z8v8z8"; // کلید عمومی (همه می‌تونن بخونن)
-    
-    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`)
+const PASSWORD = "13822";
+const TOKEN = "غلط"; // ← اینجا توکن رو بذار (مرحله بعدی توضیح میدم)
+const REPO = "alishkary00-prog/vigigames";
+const FILE_PATH = "data/projects.json";
+let projects = [];
+let editingId = null;
+
+function login() {
+    if (document.getElementById("adminPass").value === PASSWORD) {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadProjects();
+    } else {
+        alert("رمز اشتباه!");
+    }
+}
+
+function loadProjects() {
+    fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`)
         .then(res => res.json())
         .then(data => {
-            const rows = data.values;
-            if (!rows || rows.length <= 1) {
-                grid.innerHTML = "<p style='text-align:center;color:#ffd700;'>به زودی پروژه‌های جدید!</p>";
-                return;
-            }
-
-            // ردیف اول هدره، از ردیف دوم شروع کن
-            for (let i = 1; i < rows.length; i++) {
-                const [name, desc, image, status] = rows[i];
-                if (!name) continue;
-
-                const statusText = status === "completed" ? "تکمیل شده" :
-                                  status === "in-progress" ? "در حال ساخت" : "لغو شده";
-
-                const card = `
-                    <div class="project-card" data-aos="fade-up">
-                        <img src="${image || 'https://via.placeholder.com/800x600/222/ffd700?text=VIGIGAMES'}" alt="${name}">
-                        <h3>${name}</h3>
-                        <p>${desc || 'توضیحات در حال تکمیل...'}</p>
-                        <span class="status ${status || 'in-progress'}">${statusText}</span>
-                    </div>
-                `;
-                grid.innerHTML += card;
-            }
-        })
-        .catch(() => {
-            grid.innerHTML = "<p style='text-align:center;color:#ff6b6b;'>در حال بارگذاری...</p>";
+            const content = JSON.parse(atob(data.content));
+            projects = content;
+            renderAdminList();
         });
+}
+
+function saveToGitHub() {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(projects, null, 2))));
+    
+    fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
+        method: "GET"
+    })
+    .then(res => res.json())
+    .then(data => {
+        const sha = data.sha;
+        
+        return fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `token ${TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: "به‌روزرسانی پروژه‌ها",
+                content: content,
+                sha: sha,
+                branch: "main"
+            })
+        });
+    })
+    .then(() => {
+        alert("پروژه با موفقیت ثبت شد و برای همه دنیا قابل دیدنه!");
+        loadProjects();
+    });
+}
+
+// بقیه توابع (renderAdminList, editProject, deleteProject, فرم) مثل قبل
+// فقط در انتهای فرم submit اینو بذار:
+document.getElementById("projectForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const newProj = {
+        name: document.getElementById("pName").value,
+        desc: document.getElementById("pDesc").value,
+        image: document.getElementById("pImage").value,
+        status: document.getElementById("pStatus").value
+    };
+
+    if (editingId === null) projects.push(newProj);
+    else projects[editingId] = newProj;
+
+    saveToGitHub();
+    e.target.reset();
+    editingId = null;
 });
