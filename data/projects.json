@@ -1,0 +1,14 @@
+[
+  {
+    "name": "بازی شوتر فضایی",
+    "desc": "یک بازی تیراندازی سه‌بعدی با گرافیک بالا و داستان جذاب",
+    "image": "assets/images/placeholder.jpg",
+    "status": "in-progress"
+  },
+  {
+    "name": "پازل جادویی",
+    "desc": "بازی پازلی با ۱۰۰ مرحله و موسیقی فوق‌العاده",
+    "image": "assets/images/placeholder.jpg",
+    "status": "completed"
+  }
+]
