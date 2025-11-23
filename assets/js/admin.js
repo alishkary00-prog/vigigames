@@ -2,29 +2,26 @@ const PASSWORD = "13822";
 let projects = [];
 let editingId = null;
 
-// نمایش/مخفی کردن رمز
 function togglePassword() {
     const input = document.getElementById("adminPass");
     const btn = document.getElementById("togglePass");
     if (input.type === "password") {
         input.type = "text";
-        btn.innerHTML = "مخفی";
+        btn.textContent = "مخفی";
     } else {
         input.type = "password";
-        btn.innerHTML = "نمایش";
+        btn.textContent = "نمایش";
     }
 }
 
-// ورود امن
 function login() {
     const pass = document.getElementById("adminPass").value;
     if (pass === PASSWORD) {
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("adminPanel").style.display = "block";
-        loadProjects();
-        document.getElementById("errorMsg").style.display = "none";
+        loadProjectsFromStorage();
     } else {
-        document.getElementById("errorMsg").textContent = "رمز عبور اشتباه است!";
+        document.getElementById("errorMsg").textContent = "رمز اشتباه است!";
         document.getElementById("errorMsg").style.display = "block";
     }
 }
@@ -34,48 +31,37 @@ function logout() {
     document.getElementById("loginScreen").style.display = "flex";
     document.getElementById("adminPass").value = "";
     document.getElementById("adminPass").type = "password";
-    document.getElementById("togglePass").innerHTML = "نمایش";
+    document.getElementById("togglePass").textContent = "نمایش";
 }
 
-// بارگذاری پروژه‌ها
-function loadProjects() {
+function loadProjectsFromStorage() {
     const saved = localStorage.getItem("vigigames_projects");
     projects = saved ? JSON.parse(saved) : [];
     renderAdminList();
 }
 
-// ذخیره پروژه‌ها
 function saveProjects() {
     localStorage.setItem("vigigames_projects", JSON.stringify(projects));
-    document.getElementById("successMsg").innerHTML = `
-        پروژه با موفقیت ثبت شد!
-        <a href="index.html" style="color:#ffd700; margin-right:10px;">→ مشاهده در سایت</a>
-    `;
-    setTimeout(() => document.getElementById("successMsg").innerHTML = "", 6000);
+    document.getElementById("successMsg").textContent = "پروژه با موفقیت ذخیره شد!";
+    setTimeout(() => document.getElementById("successMsg").textContent = "", 4000);
     renderAdminList();
 }
 
-// نمایش لیست پروژه‌ها در پنل
 function renderAdminList() {
     const list = document.getElementById("adminProjectsList");
     list.innerHTML = projects.length === 0 
-        ? "<p style='text-align:center; color:#777; padding:30px;'>هنوز هیچ پروژه‌ای ثبت نشده است.</p>"
+        ? "<p style='text-align:center;color:#777;padding:30px;'>هنوز پروژه‌ای اضافه نشده</p>"
         : "";
 
     projects.forEach((p, i) => {
-        const statusPersian = p.status === "completed" ? "تکمیل شده" :
-                             p.status === "in-progress" ? "در حال ساخت" : "لغو شده";
-        const statusColor = p.status === "completed" ? "#28a745" :
-                           p.status === "in-progress" ? "#ffc107" : "#dc3545";
-
         list.innerHTML += `
             <div class="admin-project-item">
-                <img src="${p.image}" onerror="this.src='https://via.placeholder.com/100/222/ffd700?text=NO+IMG'" alt="پروژه">
+                <img src="${p.image}" onerror="this.src='https://placehold.co/100x100/333/fff?text=IMG'" alt="تصویر">
                 <div class="info">
                     <strong>${p.name}</strong>
-                    <p>${p.desc.substring(0, 80)}...</p>
-                    <span class="status-badge" style="background:${statusColor}">
-                        ${statusPersian}
+                    <p>${p.desc.substring(0, 70)}...</p>
+                    <span class="status-badge" style="background:${p.status==='completed'?'#28a745':p.status==='in-progress'?'#ffc107':'#dc3545'}">
+                        ${p.status === 'completed' ? 'تکمیل شده' : p.status === 'in-progress' ? 'در حال ساخت' : 'لغو شده'}
                     </span>
                 </div>
                 <div class="actions">
@@ -95,24 +81,22 @@ function editProject(i) {
     document.getElementById("pImage").value = p.image;
     document.getElementById("pStatus").value = p.status;
     document.getElementById("submitBtn").textContent = "بروزرسانی پروژه";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
 }
 
 function deleteProject(i) {
-    if (confirm("آیا از حذف این پروژه مطمئنی؟")) {
+    if (confirm("حذف بشه؟")) {
         projects.splice(i, 1);
         saveProjects();
     }
 }
 
-// ثبت فرم
-document.getElementById("projectForm").addEventListener("submit", (e) => {
+document.getElementById("projectForm").addEventListener("submit", e => {
     e.preventDefault();
-
     const newProject = {
         name: document.getElementById("pName").value.trim(),
         desc: document.getElementById("pDesc").value.trim(),
-        image: document.getElementById("pImage").value.trim() || "https://via.placeholder.com/800x600/222/ffd700?text=VIGIGAMES",
+        image: document.getElementById("pImage").value.trim() || "https://placehold.co/800x600/222233/ffd700?text=VIGIGAMES",
         status: document.getElementById("pStatus").value
     };
 
