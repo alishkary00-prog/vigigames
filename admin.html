@@ -1,67 +1,39 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت - Vigigames</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body class="admin-body">
+document.addEventListener("DOMContentLoaded", () => {
+    const grid = document.getElementById('projectsGrid');
+    
+    // لینک Google Sheet خودت رو اینجا بذار (فقط ID شیت)
+    const SHEET_ID = "1aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890"; // ← عوض کن!
+    const API_KEY = "AIzaSyBwN8k9o3j8s0vY8z8v8z8v8z8v8z8v8z8"; // کلید عمومی (همه می‌تونن بخونن)
+    
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`)
+        .then(res => res.json())
+        .then(data => {
+            const rows = data.values;
+            if (!rows || rows.length <= 1) {
+                grid.innerHTML = "<p style='text-align:center;color:#ffd700;'>به زودی پروژه‌های جدید!</p>";
+                return;
+            }
 
-    <!-- صفحه ورود امن -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-box">
-            <h2>ورود مدیر</h2>
-            <div class="input-group">
-                <input type="password" id="adminPass" placeholder="رمز عبور را وارد کنید" autocomplete="off">
-                <button type="button" id="togglePass" onclick="togglePassword()">
-                    نمایش
-                </button>
-            </div>
-            <button class="login-btn" onclick="login()">ورود به پنل</button>
-            <p class="error" id="errorMsg"></p>
-        </div>
-    </div>
+            // ردیف اول هدره، از ردیف دوم شروع کن
+            for (let i = 1; i < rows.length; i++) {
+                const [name, desc, image, status] = rows[i];
+                if (!name) continue;
 
-    <!-- پنل مدیریت -->
-    <div class="admin-panel container" id="adminPanel" style="display:none;">
-        <div class="header-admin">
-            <h2>مدیریت پروژه‌های بازی‌سازی</h2>
-            <div>
-                <a href="index.html" class="home-btn">صفحه اصلی</a>
-                <button class="logout-btn" onclick="logout()">خروج</button>
-            </div>
-        </div>
+                const statusText = status === "completed" ? "تکمیل شده" :
+                                  status === "in-progress" ? "در حال ساخت" : "لغو شده";
 
-        <form id="projectForm">
-            <input type="text" id="pName" placeholder="نام پروژه (مثال: بازی جنگجویان شب)" required>
-            <textarea id="pDesc" placeholder="توضیحات کامل پروژه..." required minlength="10"></textarea>
-            <input type="url" id="pImage" placeholder="لینک مستقیم عکس (مثال: https://i.imgur.com/abc123.jpg)" required>
-            
-            <label>وضعیت پروژه:</label>
-            <select id="pStatus" required>
-                <option value="in-progress">در حال ساخت</option>
-                <option value="completed">تکمیل شده</option>
-                <option value="cancelled">لغو شده</option>
-            </select>
-
-            <button type="submit" id="submitBtn">ثبت پروژه</button>
-        </form>
-
-        <div class="success" id="successMsg"></div>
-
-        <h3 style="margin-top: 50px; color:#ffd700;">پروژه‌های ثبت شده</h3>
-        <div id="adminProjectsList"></div>
-
-        <div style="text-align:center; margin:50px 0;">
-            <a href="index.html" class="home-btn big">
-                بازگشت به صفحه اصلی سایت
-            </a>
-        </div>
-    </div>
-
-    <script src="assets/js/admin.js"></script>
-</body>
-</html>
+                const card = `
+                    <div class="project-card" data-aos="fade-up">
+                        <img src="${image || 'https://via.placeholder.com/800x600/222/ffd700?text=VIGIGAMES'}" alt="${name}">
+                        <h3>${name}</h3>
+                        <p>${desc || 'توضیحات در حال تکمیل...'}</p>
+                        <span class="status ${status || 'in-progress'}">${statusText}</span>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            }
+        })
+        .catch(() => {
+            grid.innerHTML = "<p style='text-align:center;color:#ff6b6b;'>در حال بارگذاری...</p>";
+        });
+});
