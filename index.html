@@ -4,13 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vigigames - پروژه‌های بازی‌سازی من</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <meta name="description" content="پروژه‌های بازی‌سازی مستقل من - ساخته شده با عشق و جاوااسکریپت">
+    
+    <!-- فونت وزیرمتن -->
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- استایل اصلی -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- AOS انیمیشن -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    
+    <!-- آیکون‌ها -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
+    <!-- هدر اصلی -->
     <header class="hero">
         <div class="stars"></div>
         <div class="container">
@@ -22,11 +32,15 @@
         </div>
     </header>
 
+    <!-- بخش پروژه‌ها -->
     <section class="container projects-section">
         <h2 data-aos="fade-up">پروژه‌های من</h2>
-        <div class="projects-grid" id="projectsGrid"></div>
+        <div class="projects-grid" id="projectsGrid">
+            <!-- پروژه‌ها اینجا با جاوااسکریپت لود میشن -->
+        </div>
     </section>
 
+    <!-- فوتر -->
     <footer>
         <div class="container">
             <p>© 2025 Vigigames - تمامی حقوق محفوظ است</p>
@@ -34,8 +48,17 @@
         </div>
     </footer>
 
+    <!-- اسکریپت‌های لازم -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="assets/js/main.js"></script>
-    <script>AOS.init({duration:1000, once:true});</script>
+    
+    <script>
+        // فعال‌سازی انیمیشن AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
 </body>
 </html>
