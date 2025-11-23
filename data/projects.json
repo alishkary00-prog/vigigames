@@ -1,14 +1,14 @@
 [
   {
-    "name": "بازی شوتر فضایی",
-    "desc": "یک بازی تیراندازی سه‌بعدی با گرافیک بالا و داستان جذاب",
-    "image": "assets/images/placeholder.jpg",
+    "name": "شکارچیان شب",
+    "desc": "بازی اکشن-ماجراجویی در دنیای تاریک با گرافیک خیره‌کننده",
+    "image": "https://i.imgur.com/9Zz9Z0Z.png",
     "status": "in-progress"
   },
   {
-    "name": "پازل جادویی",
-    "desc": "بازی پازلی با ۱۰۰ مرحله و موسیقی فوق‌العاده",
-    "image": "assets/images/placeholder.jpg",
+    "name": "پازل زمان",
+    "desc": "بازی پازلی با قابلیت سفر در زمان و ۱۵۰ مرحله",
+    "image": "https://i.imgur.com/6b9X8K8.png",
     "status": "completed"
   }
 ]
