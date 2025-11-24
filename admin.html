@@ -6,35 +6,44 @@
     <title>پنل مدیریت - VIGIGAMES</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <style>
         :root { --neon: #00ffff; --dark: #0d0d1a; --glass: rgba(10,15,40,0.4); }
-        body { background:#000; color:#e0f0ff; font-family:'Share Tech Mono',monospace; min-height:100vh; }
-        .login-screen { position:fixed; inset:0; background:rgba(0,0,0,0.95); display:flex; align-items:center; justify-content:center; z-index:999; }
-        .login-box { background:var(--glass); padding:40px; border-radius:16px; border:1px solid var(--neon); box-shadow:0 0 30px rgba(0,255,255,0.3); text-align:center; backdrop-filter:blur(10px); }
-        .login-box h2 { font-family:'Orbitron',sans-serif; font-size:2.5rem; color:var(--neon); margin-bottom:30px; }
-        .input-group { position:relative; margin:20px 0; }
-        .input-group input { width:100%; padding:14px; background:rgba(255,255,255,0.05); border:1px solid var(--neon); border-radius:8px; color:#fff; font-size:1.1rem; }
-        .input-group button { position:absolute; left:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--neon); cursor:pointer; }
-        .login-btn { background:var(--neon); color:#000; padding:14px 40px; border:none; border-radius:50px; font-weight:bold; font-size:1.1rem; cursor:pointer; margin-top:20px; box-shadow:0 0 20px rgba(0,255,255,0.5); }
-        .error { color:#ff3366; margin-top:15px; display:none; }
+        body { background:#000; color:#e0f0ff; font-family:'Share Tech Mono',monospace; min-height:100vh; padding:20px; }
+        
+        .login-screen { position:fixed; inset:0; background:rgba(0,0,0,0.97); display:flex; align-items:center; justify-content:center; z-index:999; backdrop-filter:blur(5px); }
+        .login-box { background:var(--glass); padding:50px 40px; border-radius:20px; border:2px solid var(--neon); box-shadow:0 0 40px rgba(0,255,255,0.4); text-align:center; backdrop-filter:blur(15px); width:90%; max-width:420px; }
+        .login-box h2 { font-family:'Orbitron',sans-serif; font-size:3rem; color:var(--neon); margin-bottom:30px; text-shadow:0 0 20px var(--neon); }
+        .input-group { position:relative; margin:25px 0; }
+        .input-group input { width:100%; padding:16px; background:rgba(255,255,255,0.05); border:2px solid var(--neon); border-radius:12px; color:#fff; font-size:1.2rem; text-align:center; }
+        .login-btn { background:var(--neon); color:#000; padding:16px 50px; border:none; border-radius:50px; font-weight:bold; font-size:1.3rem; cursor:pointer; margin-top:20px; box-shadow:0 0 30px rgba(0,255,255,0.6); transition:0.3s; }
+        .login-btn:hover { transform:scale(1.05); box-shadow:0 0 50px rgba(0,255,255,0.8); }
+        .error { color:#ff3366; margin-top:15px; font-weight:bold; display:none; }
 
-        .admin-panel { padding:40px 20px; display:none; }
-        .header-admin { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; flex-wrap:wrap; gap:15px; }
-        .header-admin h2 { font-family:'Orbitron',sans-serif; font-size:2.8rem; color:var(--neon); }
-        .home-btn, .logout-btn { background:var(--neon); color:#000; padding:10px 25px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-block; }
+        .admin-panel { display:none; max-width:1100px; margin:0 auto; }
+        .header-admin { display:flex; justify-content:space-between; align-items:center; margin-bottom:50px; flex-wrap:wrap; gap:20px; padding:20px 0; border-bottom:2px solid var(--neon); }
+        .header-admin h1 { font-family:'Orbitron',sans-serif; font-size:3.5rem; color:var(--neon); text-shadow:0 0 20px var(--neon); }
+        .btn-group a, .btn-group button { background:var(--neon); color:#000; padding:12px 30px; border:none; border-radius:50px; font-weight:bold; text-decoration:none; margin-left:10px; cursor:pointer; }
 
-        form { background:var(--glass); padding:30px; border-radius:16px; border:1px solid rgba(0,255,255,0.3); backdrop-filter:blur(10px); }
-        form input, form textarea, form select { width:100%; padding:14px; margin:15px 0; background:rgba(255,255,255,0.05); border:1px solid var(--neon); border-radius:8px; color:#fff; font-family:inherit; }
-        form button { background:var(--neon); color:#000; padding:14px 30px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; }
+        form { background:var(--glass); padding:35px; border-radius:20px; border:2px solid rgba(0,255,255,0.3); backdrop-filter:blur(15px); margin-bottom:40px; }
+        form input, form textarea, form select { width:100%; padding:16px; margin:15px 0; background:rgba(255,255,255,0.05); border:2px solid var(--neon); border-radius:12px; color:#fff; font-family:inherit; font-size:1.1rem; }
+        form button { background:var(--neon); color:#000; padding:16px 40px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; font-size:1.2rem; }
 
-        .download-section { text-align:center; margin:50px 0; padding:30px; background:var(--glass); border-radius:16px; border:1px solid var(--neon); }
-        .download-btn { background:var(--neon); color:#000; padding:16px 40px; border:none; border-radius:50px; font-size:1.2rem; font-weight:bold; cursor:pointer; box-shadow:0 0 30px rgba(0,255,255,0.6); }
+        .download-section { text-align:center; margin:60px 0; padding:40px; background:var(--glass); border-radius:20px; border:2px solid var(--neon); backdrop-filter:blur(15px); }
+        .download-btn { background:#00ff88; color:#000; padding:20px 60px; border:none; border-radius:50px; font-size:1.5rem; font-weight:bold; cursor:pointer; box-shadow:0 0 40px rgba(0,255,136,0.6); }
 
-        .admin-project-item { display:flex; align-items:center; gap:20px; background:var(--glass); padding:20px; margin:20px 0; border-radius:12px; border:1px solid rgba(0,255,255,0.2); }
-        .admin-project-item img { width:100px; height:100px; object-fit:cover; border-radius:8px; }
-        .admin-project-item .actions button { margin-left:10px; padding:8px 16px; border:none; border-radius:8px; cursor:pointer; }
-        .success { color:#00ff88; text-align:center; font-weight:bold; margin:20px 0; }
+        .section-title { font-family:'Orbitron',sans-serif; color:var(--neon); font-size:2.2rem; margin:50px 0 25px; text-shadow:0 0 15px var(--neon); }
+
+        .admin-list { display:grid; gap:20px; }
+        .admin-item { background:var(--glass); padding:20px; border-radius:16px; border:1px solid rgba(0,255,255,0.3); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; }
+        .admin-item img { width:120px; height:80px; object-fit:cover; border-radius:12px; border:2px solid var(--neon); }
+        .success { color:#00ff88; text-align:center; font-weight:bold; font-size:1.3rem; margin:20px 0; }
+
+        @media (max-width:768px) {
+            .header-admin h1 { font-size:2.5rem; }
+            .login-box { padding:30px 20px; }
+            .admin-item { flex-direction:column; text-align:center; }
+        }
     </style>
 </head>
 <body>
@@ -42,10 +51,9 @@
     <!-- صفحه ورود -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
-            <h2>ورود مدیر</h2>
+            <h2>VIGIGAMES</h2>
             <div class="input-group">
-                <input type="password" id="adminPass" placeholder="رمز عبور" autocomplete="off">
-                <button type="button" id="togglePass" onclick="togglePassword()">نمایش</button>
+                <input type="password" id="adminPass" placeholder="رمز عبور را وارد کن" autocomplete="off">
             </div>
             <button class="login-btn" onclick="login()">ورود به پنل</button>
             <p class="error" id="errorMsg">رمز اشتباه است!</p>
@@ -53,65 +61,70 @@
     </div>
 
     <!-- پنل مدیریت -->
-    <div class="container admin-panel" id="adminPanel">
+    <div class="admin-panel" id="adminPanel">
         <div class="header-admin">
-            <h2>مدیریت پروژه‌ها</h2>
-            <div>
-                <a href="../index.html" class="home-btn">صفحه اصلی</a>
-                <button class="logout-btn" onclick="logout()">خروج</button>
+            <h1>پنل مدیریت</h1>
+            <div class="btn-group">
+                <a href="index.html">صفحه اصلی</a>
+                <button onclick="logout()">خروج</button>
             </div>
         </div>
 
+        <!-- فرم پروژه -->
+        <h2 class="section-title">اضافه کردن پروژه جدید</h2>
         <form id="projectForm">
             <input type="text" id="pName" placeholder="نام پروژه" required>
-            <textarea id="pDesc" rows="4" placeholder="توضیحات کامل پروژه..." required></textarea>
-            <input type="url" id="pImage" placeholder="لینک مستقیم عکس (مثال: https://i.imgur.com/abc123.jpg)" required>
-            <select id="pStatus" required>
+            <textarea id="pDesc" rows="5" placeholder="توضیحات کامل پروژه..." required></textarea>
+            <input type="url" id="pImage" placeholder="لینک عکس پروژه (مثال: https://i.imgur.com/abc.jpg)" required>
+            <select id="pStatus">
                 <option value="in-progress">در حال ساخت</option>
                 <option value="completed">تکمیل شده</option>
                 <option value="cancelled">لغو شده</option>
             </select>
-            <button type="submit" id="submitBtn">ثبت پروژه</button>
+            <button type="submit">ثبت پروژه</button>
         </form>
 
-        <div class="success" id="successMsg"></div>
+        <!-- فرم تبلیغات -->
+        <h2 class="section-title">اضافه کردن تبلیغ / اسپانسر</h2>
+        <form id="adForm">
+            <input type="text" id="adTitle" placeholder="نام اسپانسر (مثل: تپسل)" required>
+            <input type="url" id="adImage" placeholder="لینک بنر (مثلاً 728x90 یا 300x250)" required>
+            <input type="url" id="adLink" placeholder="لینک کلیک[](https://...)" required>
+            <label><input type="checkbox" id="adActive" checked> فعال باشد</label>
+            <button type="submit">اضافه کردن تبلیغ</button>
+        </form>
 
-        <!-- دانلود JSON -->
+        <!-- دانلود فایل -->
         <div class="download-section">
-            <h3 style="color:var(--neon);margin-bottom:20px;">برای نمایش در سایت:</h3>
+            <h3>برای نمایش در سایت:</h3>
             <button type="button" onclick="downloadJSON()" class="download-btn">
                 دانلود projects.json
             </button>
-            <p style="margin-top:15px;color:#99ccff;font-size:0.9rem;">
-                فایل دانلود شده را در GitHub → data/projects.json آپلود کن
-            </p>
+            <p style="margin-top:20px;color:#99ccff;">فایل رو در GitHub → data/projects.json آپلود کن</p>
         </div>
+        <div class="success" id="successMsg"></div>
 
-        <h3 style="color:var(--neon);margin:50px 0 20px;">پروژه‌های ثبت شده (در مرورگر شما)</h3>
-        <div id="adminProjectsList"></div>
+        <!-- لیست پروژه‌ها -->
+        <h2 class="section-title">پروژه‌های ثبت شده</h2>
+        <div class="admin-list" id="projectsList"></div>
+
+        <!-- لیست تبلیغات -->
+        <h2 class="section-title">تبلیغات / اسپانسرها</h2>
+        <div class="admin-list" id="adsList"></div>
     </div>
 
     <script>
         const PASSWORD = "13822";
-        let projects = [];
-        let editingId = null;
-
-        // بارگذاری از localStorage
-        const saved = localStorage.getItem("vigigames_projects");
-        if (saved) projects = JSON.parse(saved);
-
-        function togglePassword() {
-            const input = document.getElementById("adminPass");
-            const btn = document.getElementById("togglePass");
-            if (input.type === "password") { input.type = "text"; btn.textContent = "مخفی"; }
-            else { input.type = "password"; btn.textContent = "نمایش"; }
-        }
+        let projects = JSON.parse(localStorage.getItem("vigigames_projects") || "[]");
+        let ads = JSON.parse(localStorage.getItem("vigigames_ads") || "[]");
+        let editingProject = null;
 
         function login() {
             if (document.getElementById("adminPass").value === PASSWORD) {
                 document.getElementById("loginScreen").style.display = "none";
                 document.getElementById("adminPanel").style.display = "block";
-                renderList();
+                renderProjects();
+                renderAds();
             } else {
                 document.getElementById("errorMsg").style.display = "block";
             }
@@ -125,77 +138,94 @@
         }
 
         function downloadJSON() {
-            if (projects.length === 0) return alert("ابتدا یک پروژه اضافه کن!");
-            const data = JSON.stringify(projects, null, 2);
-            const blob = new Blob([data], {type: "application/json"});
+            const data = { projects, ads };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url; a.download = "projects.json"; a.click();
-            document.getElementById("successMsg").textContent = "فایل projects.json دانلود شد! حالا در GitHub آپلود کن.";
+            document.getElementById("successMsg").textContent = "فایل دانلود شد! حالا در GitHub آپلود کن";
             setTimeout(() => document.getElementById("successMsg").textContent = "", 5000);
         }
 
-        function renderList() {
-            const list = document.getElementById("adminProjectsList");
-            if (projects.length === 0) {
-                list.innerHTML = "<p style='text-align:center;color:#6688aa;padding:60px;'>هنوز پروژه‌ای اضافه نشده</p>";
-                return;
-            }
-            list.innerHTML = "";
+        // پروژه‌ها
+        function renderProjects() {
+            const list = document.getElementById("projectsList");
+            list.innerHTML = projects.length === 0 ? "<p style='text-align:center;color:#6688aa;padding:50px;'>هنوز پروژه‌ای اضافه نشده</p>" : "";
             projects.forEach((p, i) => {
-                const statusText = p.status === "completed" ? "تکمیل شده" : p.status === "in-progress" ? "در حال ساخت" : "لغو شده";
+                const status = p.status === "completed" ? "تکمیل شده" : p.status === "in-progress" ? "در حال ساخت" : "لغو شده";
                 const color = p.status === "completed" ? "#00ff88" : p.status === "in-progress" ? "#ff0088" : "#666";
-                list.innerHTML += `
-                    <div class="admin-project-item">
-                        <img src="${p.image}" onerror="this.src='https://placehold.co/100x100/111/00ffff?text=IMG'" alt="">
-                        <div style="flex:1;">
-                            <strong style="color:var(--neon);font-size:1.3rem;">${p.name}</strong>
-                            <p style="margin:8px 0;color:#99ccff;">${p.desc.substring(0,100)}...</p>
-                            <span style="padding:4px 12px;background:rgba(0,255,255,0.2);color:${color};border-radius:20px;font-size:0.8rem;">${statusText}</span>
-                        </div>
-                        <div class="actions">
-                            <button onclick="editProject(${i})" style="background:#00ff88;color:#000;">ویرایش</button>
-                            <button onclick="deleteProject(${i})" style="background:#ff3366;">حذف</button>
-                        </div>
-                    </div>`;
+                list.innerHTML += `<div class="admin-item">
+                    <img src="${p.image}" onerror="this.src='https://placehold.co/120x80/111/00ffff?text=IMG'">
+                    <div style="flex:1;"><strong style="color:var(--neon);font-size:1.4rem;">${p.name}</strong><br><small>${p.desc.substring(0,80)}...</small><br>
+                    <span style="padding:6px 16px;background:rgba(0,255,255,0.2);color:${color};border-radius:30px;">${status}</span></div>
+                    <div>
+                        <button onclick="editProject(${i})" style="background:#00ff88;color:#000;margin:5px;padding:10px 20px;border:none;border-radius:50px;">ویرایش</button>
+                        <button onclick="deleteProject(${i})" style="background:#ff3366;color:#fff;margin:5px;padding:10px 20px;border:none;border-radius:50px;">حذف</button>
+                    </div>
+                </div>`;
             });
         }
 
-        function editProject(i) {
-            const p = projects[i];
-            editingId = i;
-            document.getElementById("pName").value = p.name;
-            document.getElementById("pDesc").value = p.desc;
-            document.getElementById("pImage").value = p.image;
-            document.getElementById("pStatus").value = p.status;
-            document.getElementById("submitBtn").textContent = "بروزرسانی پروژه";
-        }
+        function editProject(i) { /* کد ویرایش (اختیاری) */ }
+        function deleteProject(i) { if(confirm("حذف بشه؟")) { projects.splice(i,1); localStorage.setItem("vigigames_projects", JSON.stringify(projects)); renderProjects(); downloadJSON(); } }
 
-        function deleteProject(i) {
-            if (confirm("واقعاً حذف بشه؟")) {
-                projects.splice(i, 1);
-                localStorage.setItem("vigigames_projects", JSON.stringify(projects));
-                renderList();
-            }
-        }
-
-        document.getElementById("projectForm").addEventListener("submit", function(e) {
+        document.getElementById("projectForm").addEventListener("submit", e => {
             e.preventDefault();
-            const newProj = {
+            const p = {
                 name: document.getElementById("pName").value.trim(),
                 desc: document.getElementById("pDesc").value.trim(),
                 image: document.getElementById("pImage").value.trim() || "https://placehold.co/800x600/111/00ffff?text=VIGIGAMES",
                 status: document.getElementById("pStatus").value
             };
-
-            if (editingId === null) projects.push(newProj);
-            else { projects[editingId] = newProj; editingId = null; document.getElementById("submitBtn").textContent = "ثبت پروژه"; }
-
+            projects.push(p);
             localStorage.setItem("vigigames_projects", JSON.stringify(projects));
-            renderList();
-            document.getElementById("successMsg").textContent = "پروژه ثبت شد! حالا دانلود کن و آپلود کن.";
-            setTimeout(() => document.getElementById("successMsg").textContent = "", 4000);
+            renderProjects();
+            downloadJSON();
             e.target.reset();
+            document.getElementById("successMsg").textContent = "پروژه اضافه شد!";
+            setTimeout(() => document.getElementById("successMsg").textContent = "", 3000);
+        });
+
+        // تبلیغات
+        function renderAds() {
+            const list = document.getElementById("adsList");
+            list.innerHTML = ads.length === 0 ? "<p style='text-align:center;color:#6688aa;padding:50px;'>هنوز تبلیغی اضافه نشده</p>" : "";
+            ads.forEach((ad, i) => {
+                list.innerHTML += `<div class="admin-item">
+                    <img src="${ad.image}" onerror="this.style.display='none'">
+                    <div style="flex:1;"><strong style="color:var(--neon);">${ad.title}</strong><br><small>${ad.link}</small></div>
+                    <div>
+                        <label style="color:#99ccff;"><input type="checkbox" ${ad.active!==false?"checked":""} onchange="toggleAd(${i})"> فعال</label>
+                        <button onclick="removeAd(${i})" style="background:#ff3366;color:#fff;margin:5px;padding:10px 20px;border:none;border-radius:50px;">حذف</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        window.toggleAd = function(i) {
+            ads[i].active = !ads[i].active;
+            localStorage.setItem("vigigames_ads", JSON.stringify(ads));
+            downloadJSON();
+        }
+
+        window.removeAd = function(i) {
+            if(confirm("حذف بشه؟")) { ads.splice(i,1); localStorage.setItem("vigigames_ads", JSON.stringify(ads)); renderAds(); downloadJSON(); }
+        }
+
+        document.getElementById("adForm").addEventListener("submit", e => {
+            e.preventDefault();
+            ads.push({
+                title: document.getElementById("adTitle").value,
+                image: document.getElementById("adImage").value,
+                link: document.getElementById("adLink").value,
+                active: document.getElementById("adActive").checked
+            });
+            localStorage.setItem("vigigames_ads", JSON.stringify(ads));
+            renderAds();
+            downloadJSON();
+            e.target.reset();
+            document.getElementById("successMsg").textContent = "تبلیغ اضافه شد!";
+            setTimeout(() => document.getElementById("successMsg").textContent = "", 3000);
         });
     </script>
 </body>
