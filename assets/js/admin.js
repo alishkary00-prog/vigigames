@@ -19,35 +19,51 @@ function login() {
         document.getElementById("adminPanel").style.display = "block";
         loadProjects();
     } else {
+        document.getElementById("errorMsg").textContent = "رمز اشتباه است!";
         document.getElementById("errorMsg").style.display = "block";
     }
 }
 
+function logout() {
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("adminPass").value = "";
+    document.getElementById("adminPass").type = "password";
+    document.getElementById("togglePass").textContent = "نمایش";
+    document.getElementById("errorMsg").style.display = "none";
+}
+
 function loadProjects() {
+    console.log("در حال بارگذاری پروژه‌ها از GitHub...");
     fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            return res.json();
+        })
         .then(data => {
+            console.log("داده از GitHub:", data);
             currentSha = data.sha;
             projects = data.content ? JSON.parse(atob(data.content)) : [];
-            renderList(); // فوراً لیست رو نشون بده
+            renderList();
         })
         .catch(err => {
-            console.log("فایل هنوز وجود نداره یا خطا", err);
-            projects = [];
+            console.error("خطا در بارگذاری از GitHub:", err);
+            // اگه فایل وجود نداره، از localStorage استفاده کن
+            const saved = localStorage.getItem("vigigames_projects");
+            projects = saved ? JSON.parse(saved) : [];
             renderList();
         });
 }
 
 function saveToGitHub() {
+    console.log("در حال ذخیره به GitHub...");
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(projects, null, 2))));
     
     const payload = {
-        message: "به‌روزرسانی پروژه‌ها",
+        message: "به‌روزرسانی پروژه‌ها توسط ادمین",
         content: content,
         branch: "main"
     };
-    
-    // فقط اگه sha داشته باشیم، اضافه کنیم (برای آپدیت)
     if (currentSha) payload.sha = currentSha;
 
     fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
@@ -59,17 +75,25 @@ function saveToGitHub() {
         body: JSON.stringify(payload)
     })
     .then(res => {
-        if (!res.ok) throw new Error("خطا در آپلود");
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
         return res.json();
     })
     .then(data => {
-        currentSha = data.content.sha; // sha جدید رو ذخیره کن
-        alert("پروژه با موفقیت ثبت شد! حالا برای همه دنیا قابل دیدنه 🚀");
-        renderList(); // فوراً لیست رو آپدیت کن (بدون رفرش)
+        console.log("موفقیت در آپلود به GitHub:", data);
+        currentSha = data.content.sha;
+        document.getElementById("successMsg").innerHTML = "پروژه با موفقیت ثبت شد و برای همه دنیا قابل دیدنه! 🚀";
+        setTimeout(() => document.getElementById("successMsg").innerHTML = "", 5000);
+        // ۵ ثانیه بعد لیست رو رفرش کن
+        setTimeout(loadProjects, 5000);
     })
     .catch(err => {
-        console.error(err);
-        alert("خطایی رخ داد. کنسول رو چک کن.");
+        console.error("خطا در آپلود به GitHub:", err);
+        // حداقل توی localStorage ذخیره کن
+        localStorage.setItem("vigigames_projects", JSON.stringify(projects));
+        document.getElementById("successMsg").innerHTML = "پروژه محلی ذخیره شد، اما آپلود به GitHub شکست. کنسول رو چک کن.";
+        setTimeout(() => document.getElementById("successMsg").innerHTML = "", 5000);
     });
 }
 
@@ -121,7 +145,7 @@ function deleteProject(i) {
     }
 }
 
-// فرم ثبت/ویرایش پروژه
+// فرم ثبت/ویرایش
 document.getElementById("projectForm").addEventListener("submit", function(e) {
     e.preventDefault();
     
@@ -137,6 +161,7 @@ document.getElementById("projectForm").addEventListener("submit", function(e) {
         return;
     }
 
+    // فوراً به آرایه اضافه کن (تا لیست بلافاصله آپدیت بشه)
     if (editingId === null) {
         projects.push(newProj);
     } else {
@@ -145,6 +170,10 @@ document.getElementById("projectForm").addEventListener("submit", function(e) {
         document.getElementById("submitBtn").textContent = "ثبت پروژه";
     }
 
-    saveToGitHub();
+    renderList(); // فوراً لیست رو رندر کن
+    saveToGitHub(); // بعدش سعی کن به GitHub آپلود کن
     e.target.reset();
 });
+
+// خروج
+document.getElementById("logoutBtn").addEventListener("click", logout);
