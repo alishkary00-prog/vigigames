@@ -1,4 +1,6 @@
-/* VIGIGAMES — Dark Cyberpunk Theme 2025 */
+/* VIGIGAMES — Final Dark Cyberpunk Theme 2025 */
+/* آخرین ویرایش: شامل پروژه‌ها + تبلیغات + ریسپانسیو کامل */
+
 :root {
     --neon: #00ffff;
     --dark: #0d0d1a;
@@ -21,12 +23,13 @@ body {
     direction: rtl;
 }
 
-/* پس‌زمینه پارتیکل و دود (particles.js رویش کار می‌کنه) */
+/* پس‌زمینه پارتیکل و دود */
 #particles {
     position: fixed;
     inset: 0;
     z-index: -2;
 }
+
 .smoke {
     position: fixed;
     inset: 0;
@@ -157,6 +160,51 @@ body {
     border: 1px solid rgba(0,255,255,0.3);
 }
 
+/* بخش تبلیغات / حمایت شده توسط */
+.ads-section {
+    padding: 100px 20px;
+    background: linear-gradient(to bottom, #0a0a15, #000);
+    text-align: center;
+}
+
+.ads h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3.5rem;
+    color: var(--neon);
+    text-shadow: 0 0 20px var(--neon);
+    margin-bottom: 60px;
+}
+
+.ads-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.ad-link {
+    display: inline-block;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    opacity: 0.9;
+}
+
+.ad-link:hover {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+}
+
+.ad-link img {
+    display: block;
+    border-radius: 16px;
+    transition: all 0.4s ease;
+}
+
 /* فوتر */
 footer {
     text-align: center;
@@ -178,13 +226,25 @@ footer {
 
 .admin-link:hover {
     color: #fff;
-    text-shadow: 0 0 10px var(--neon);
+    text-shadow: 0 0 15px var(--neon);
 }
 
 /* ریسپانسیو */
+@media (max-width: 992px) {
+    .glitch { font-size: 6rem; letter-spacing: 8px; }
+    .subtitle { font-size: 1.5rem; }
+    .projects h2, .ads h2 { font-size: 3.2rem; }
+}
+
 @media (max-width: 768px) {
     .glitch { font-size: 4.5rem; letter-spacing: 6px; }
     .subtitle { font-size: 1.3rem; }
-    .projects h2 { font-size: 3rem; }
+    .projects h2, .ads h2 { font-size: 2.8rem; }
     .grid { grid-template-columns: 1fr; padding: 0 15px; }
+    .ads-grid { gap: 20px; }
+}
+
+@media (max-width: 480px) {
+    .glitch { font-size: 3.8rem; letter-spacing: 4px; }
+    .projects h2, .ads h2 { font-size: 2.4rem; }
 }
