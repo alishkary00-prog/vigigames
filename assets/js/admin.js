@@ -1,7 +1,7 @@
 const PASSWORD = "13822";
 const REPO = "alishkary00-prog/vigigames";
 const FILE_PATH = "data/projects.json";
-const TOKEN = "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"; // توکن جدید و امن شما
+const TOKEN = "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";
 let projects = [];
 let editingId = null;
 let currentSha = null;
@@ -29,9 +29,10 @@ function loadProjects() {
         .then(data => {
             currentSha = data.sha;
             projects = data.content ? JSON.parse(atob(data.content)) : [];
-            renderList();
+            renderList(); // فوراً لیست رو نشون بده
         })
-        .catch(() => {
+        .catch(err => {
+            console.log("فایل هنوز وجود نداره یا خطا", err);
             projects = [];
             renderList();
         });
@@ -40,36 +41,46 @@ function loadProjects() {
 function saveToGitHub() {
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(projects, null, 2))));
     
+    const payload = {
+        message: "به‌روزرسانی پروژه‌ها",
+        content: content,
+        branch: "main"
+    };
+    
+    // فقط اگه sha داشته باشیم، اضافه کنیم (برای آپدیت)
+    if (currentSha) payload.sha = currentSha;
+
     fetch(`https://api.github.com/repos/${REPO}/contents/${FILE_PATH}`, {
         method: "PUT",
         headers: {
             "Authorization": `token ${TOKEN}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            message: "به‌روزرسانی پروژه‌ها توسط ادمین",
-            content: content,
-            sha: currentSha,
-            branch: "main"
-        })
+        body: JSON.stringify(payload)
     })
-    .then(res => res.json())
-    .then(() => {
-        alert("پروژه با موفقیت ثبت شد و حالا برای همه دنیا قابل دیدنه!");
-        loadProjects();
+    .then(res => {
+        if (!res.ok) throw new Error("خطا در آپلود");
+        return res.json();
+    })
+    .then(data => {
+        currentSha = data.content.sha; // sha جدید رو ذخیره کن
+        alert("پروژه با موفقیت ثبت شد! حالا برای همه دنیا قابل دیدنه 🚀");
+        renderList(); // فوراً لیست رو آپدیت کن (بدون رفرش)
     })
     .catch(err => {
         console.error(err);
-        alert("خطا در ذخیره‌سازی. توکن یا اینترنت رو چک کن.");
+        alert("خطایی رخ داد. کنسول رو چک کن.");
     });
 }
 
 function renderList() {
     const list = document.getElementById("adminProjectsList");
-    list.innerHTML = projects.length === 0 
-        ? "<p style='text-align:center;color:#888;padding:50px;'>هنوز پروژه‌ای اضافه نشده</p>"
-        : "";
+    if (projects.length === 0) {
+        list.innerHTML = "<p style='text-align:center;color:#888;padding:50px;'>هنوز پروژه‌ای اضافه نشده</p>";
+        return;
+    }
 
+    list.innerHTML = "";
     projects.forEach((p, i) => {
         const statusText = p.status === "completed" ? "تکمیل شده" :
                           p.status === "in-progress" ? "در حال ساخت" : "لغو شده";
@@ -104,14 +115,16 @@ function editProject(i) {
 }
 
 function deleteProject(i) {
-    if (confirm("واقعاً حذف بشه؟")) {
+    if (confirm("واقعاً می‌خوای حذفش کنی؟")) {
         projects.splice(i, 1);
         saveToGitHub();
     }
 }
 
+// فرم ثبت/ویرایش پروژه
 document.getElementById("projectForm").addEventListener("submit", function(e) {
     e.preventDefault();
+    
     const newProj = {
         name: document.getElementById("pName").value.trim(),
         desc: document.getElementById("pDesc").value.trim(),
