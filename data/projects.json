@@ -6,3 +6,23 @@
     "status": "in-progress"
   }
 ]
+
+{
+  "projects": [],
+  "ads": [
+    {
+      "title": "تپسل",
+      "image": "https://tapsell.ir/wp-content/uploads/2024/06/tapsell-logo.png",
+      "link": "https://tapsell.ir",
+      "size": "728x90",
+      "active": true
+    },
+    {
+      "title": "یکتانت",
+      "image": "https://www.yektanet.com/wp-content/uploads/2023/12/yektanet-logo.png",
+      "link": "https://www.yektanet.com",
+      "size": "300x250",
+      "active": true
+    }
+  ]
+}
