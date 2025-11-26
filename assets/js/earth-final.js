@@ -1,22 +1,24 @@
-// assets/js/earth-final.js — نسخه کاملاً درست و بدون ارور
-import * as THREE from 'three';
+// assets/js/earth-final.js — نسخه نهایی بدون import (کاملاً کار می‌کنه روی GitHub Pages)
 
 const canvas = document.getElementById('earth-canvas');
 if (!canvas) {
     console.warn('canvas#earth-canvas پیدا نشد!');
 } else {
 
+    // از نسخه global Three.js استفاده می‌کنیم (از CDN لود شده)
+    const THREE = window.THREE;
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.z = 3.4;
-    camera.lookAt(0.98, 0.36, 0); // ژاپن دقیقاً وسط
+    camera.lookAt(0.98, 0.36, 0); // ژاپن وسط کادر
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setSize(280, 280);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
 
-    // نورپردازی قوی و یکنواخت
+    // نورپردازی قوی
     scene.add(new THREE.AmbientLight(0xffffff, 2.2));
     const sun1 = new THREE.DirectionalLight(0xffffff, 4);
     sun1.position.set(5, 3, 5);
@@ -65,21 +67,18 @@ if (!canvas) {
             opacity: 0.9
         })
     );
-    pulseDot.position.set(1.05, 0.38, 0.25); // دقیقاً روی توکیو
+    pulseDot.position.set(1.05, 0.38, 0.25);
     earthGroup.add(pulseDot);
 
-    // انیمیشن فقط برای پالس نقطه قرمز
+    // انیمیشن پالس
     function animate() {
         requestAnimationFrame(animate);
-
         const time = Date.now() * 0.003;
         pulseDot.scale.setScalar(1 + Math.sin(time * 8) * 0.3);
         pulseDot.material.opacity = 0.7 + Math.sin(time * 6) * 0.3;
-
         renderer.render(scene, camera);
     }
     animate();
 
-    // رندر اولیه
     renderer.render(scene, camera);
 }
