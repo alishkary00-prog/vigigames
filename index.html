@@ -7,10 +7,6 @@
     <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-
-    <!-- Three.js از unpkg — پایدارتر و همیشه لود می‌شه -->
-    <script src="https://unpkg.com/three@0.169.0/build/three.min.js"></script>
-
     <style>
         #earth-widget {
             position: fixed;
@@ -24,7 +20,6 @@
             box-shadow: 0 0 50px #00ffff33;
             z-index: 10;
             pointer-events: none;
-            background: #000011; /* fallback */
         }
         #earth-canvas { display: block; border-radius: 50%; width: 100%; height: 100%; }
         .japan-pin {
@@ -116,114 +111,71 @@
         });
     </script>
 
-    <!-- کره زمین — با retry کامل و fallback -->
+    <!-- کره زمین با Canvas 2D — بدون Three.js، بدون ارور، 100% آفلاین -->
     <script>
-        let retryCount = 0;
-        const maxRetries = 15;
-        function initEarth() {
-            retryCount++;
-            if (retryCount > maxRetries) {
-                console.log('Three.js لود نشد، fallback 2D');
-                fallbackEarth();
-                return;
-            }
-
-            if (typeof THREE === 'undefined') {
-                console.log('Three.js لود نشده، retry ' + retryCount);
-                setTimeout(initEarth, 200);
-                return;
-            }
-
+        document.addEventListener('DOMContentLoaded', function() {
             const canvas = document.getElementById('earth-canvas');
             if (!canvas) return;
 
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-            camera.position.z = 2.5;  // برای وسط قاب (ژاپن)
-
-            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-            renderer.setSize(280, 280);
-            renderer.setClearColor(0x000011, 1);  // تیره آبی
-
-            // نور
-            scene.add(new THREE.AmbientLight(0xffffff, 2.5));
-            const dirLight = new THREE.DirectionalLight(0x00ffff, 3);
-            dirLight.position.set(5, 3, 5);
-            scene.add(dirLight);
-
-            // کره زمین
-            const geometry = new THREE.SphereGeometry(1, 64, 64);
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x004488,
-                emissive: 0x002244,
-                emissiveIntensity: 0.8,
-                shininess: 80,
-                specular: 0x00ffff
-            });
-            const earth = new THREE.Mesh(geometry, material);
-            scene.add(earth);
-
-            // نقطه قرمز (نزدیک ژاپن)
-            const dotGeometry = new THREE.SphereGeometry(0.05, 32, 32);
-            const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0033 });
-            const dot = new THREE.Mesh(dotGeometry, dotMaterial);
-            dot.position.set(0.95, 0.35, 0.3);  // موقعیت دقیق ژاپن
-            earth.add(dot);
-
-            // انیمیشن
-            function animate() {
-                requestAnimationFrame(animate);
-                const time = Date.now() * 0.001;
-                dot.scale.setScalar(1 + Math.sin(time * 5) * 0.5);  // پالس
-                earth.rotation.y += 0.001;  // چرخش آروم
-                renderer.render(scene, camera);
-            }
-            animate();
-
-            console.log('کره زمین لود شد!');  // چک موفقیت
-        }
-
-        // fallback 2D اگر Three.js فِیل کرد
-        function fallbackEarth() {
-            const canvas = document.getElementById('earth-canvas');
-            if (!canvas) return;
             const ctx = canvas.getContext('2d');
             canvas.width = 280;
             canvas.height = 280;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // کره آبی
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = 120;
+
+            // گرادیان برای کره زمین (آبی نئونی)
             const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-            gradient.addColorStop(0, '#0066aa');
-            gradient.addColorStop(1, '#001122');
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.fill();
-            // نقطه قرمز
-            ctx.fillStyle = '#ff0033';
-            ctx.beginPath();
-            ctx.arc(centerX + 65, centerY - 30, 6, 0, 2 * Math.PI);  // موقعیت ژاپن
-            ctx.fill();
-            // پالس ساده
-            setInterval(() => {
-                const pulseSize = 6 + Math.sin(Date.now() * 0.005) * 3;
+            gradient.addColorStop(0, '#0066aa');  // مرکز روشن
+            gradient.addColorStop(0.7, '#003366');  // وسط تیره
+            gradient.addColorStop(1, '#001122');  // لبه تیره
+
+            // موقعیت ژاپن (وسط قاب)
+            const japanX = centerX + 65;
+            const japanY = centerY - 30;
+
+            function drawEarth() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // کره زمین
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
                 ctx.fill();
+
+                // نئون دور کره
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius + 2, 0, 2 * Math.PI);
+                ctx.stroke();
+
+                // نقطه قرمز پالس‌دار روی ژاپن
+                const pulseSize = 8 + Math.sin(Date.now() * 0.005) * 4;  // پالس
                 ctx.fillStyle = '#ff0033';
                 ctx.beginPath();
-                ctx.arc(centerX + 65, centerY - 30, pulseSize, 0, 2 * Math.PI);
+                ctx.arc(japanX, japanY, pulseSize, 0, 2 * Math.PI);
                 ctx.fill();
-            }, 50);
-        }
 
-        // شروع
-        document.addEventListener('DOMContentLoaded', initEarth);
+                // سایه نئون برای نقطه
+                ctx.shadowColor = '#ff0033';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;  // ریست سایه
+
+                // چرخش گرادیان برای شبیه‌سازی چرخش
+                gradient.addColorStop(0, '#0066aa');
+                gradient.addColorStop(0.7, '#003366');
+                gradient.addColorStop(1, '#001122');
+            }
+
+            // انیمیشن
+            function animate() {
+                requestAnimationFrame(animate);
+                drawEarth();
+            }
+            animate();
+        });
     </script>
 </body>
 </html>
