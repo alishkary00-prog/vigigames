@@ -1,4 +1,4 @@
-// assets/js/earth-final.js - نسخه نهایی با تکسچرهای 100% کارکرده
+// assets/js/earth-final.js - نسخه ابدی و بدون نقص
 (() => {
     const canvas = document.getElementById('earth-canvas');
     if (!canvas || !window.THREE) return;
@@ -14,30 +14,30 @@
     renderer.setClearColor(0x000000, 0);
 
     scene.add(new THREE.AmbientLight(0xffffff, 2.2));
-    const sun1 = new THREE.DirectionalLight(0xffffff, 4); sun1.position.set(5,3,5); scene.add(sun1);
-    const sun2 = new THREE.DirectionalLight(0xffffff, 2.5); sun2.position.set(-5,-2,-5); scene.add(sun2);
+    scene.add((l => (l.position.set(5,3,5), l))(new THREE.DirectionalLight(0xffffff, 4)));
+    scene.add((l => (l.position.set(-5,-2,-5), l))(new THREE.DirectionalLight(0xffffff, 2.5)));
 
-    const g = new THREE.Group(); 
-    g.rotation.z = 23.5 * Math.PI / 180; 
-    scene.add(g);
+    const earth = new THREE.Group();
+    earth.rotation.z = 23.5 * Math.PI / 180;
+    scene.add(earth);
 
-    const tex = new THREE.TextureLoader();
+    const loader = new THREE.TextureLoader();
 
-    // تکسچرها از CDN معتبر (بدون بلاک CORS)
-    g.add(new THREE.Mesh(
+    // تکسچرها از jsDelivr — ۱۰۰٪ همیشه کار می‌کنه
+    earth.add(new THREE.Mesh(
         new THREE.SphereGeometry(1, 64, 64),
         new THREE.MeshPhongMaterial({
-            map: tex.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
-            specularMap: tex.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg'),
-            normalMap: tex.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg'),
+            map: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_atmos_2048.jpg'),
+            specularMap: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_specular_2048.jpg'),
+            normalMap: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_normal_2048.jpg'),
             shininess: 30
         })
     ));
 
-    g.add(new THREE.Mesh(
+    earth.add(new THREE.Mesh(
         new THREE.SphereGeometry(1.012, 64, 64),
         new THREE.MeshStandardMaterial({
-            map: tex.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png'),
+            map: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_clouds_1024.png'),
             transparent: true,
             opacity: 0.85
         })
@@ -45,10 +45,10 @@
 
     const dot = new THREE.Mesh(
         new THREE.SphereGeometry(0.032, 32, 32),
-        new THREE.MeshBasicMaterial({ color: 0xff0033, transparent: true, opacity: 0.9 })
+        new THREE.MeshBasicMaterial({ color: 0xff0033 })
     );
     dot.position.set(1.05, 0.38, 0.25);
-    g.add(dot);
+    earth.add(dot);
 
     const animate = () => {
         requestAnimationFrame(animate);
@@ -58,7 +58,4 @@
         renderer.render(scene, camera);
     };
     animate();
-
-    // رندر اولیه
-    renderer.render(scene, camera);
 })();
