@@ -8,19 +8,57 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <!-- فقط Three.js — بدون فایل اضافی -->
+    <!-- فقط Three.js -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
 
     <style>
-        #earth-widget{position:fixed;bottom:20px;left:20px;width:280px;height:280px;border:2px solid #00ffff44;border-radius:50%;overflow:hidden;box-shadow:0 0 50px #00ffff33;z-index:10;pointer-events:none}
-        #earth-canvas{display:block;border-radius:50%}
-        .japan-pin{position:absolute;top:39%;left:73.5%;font-size:32px;color:#ff0033;text-shadow:0 0 25px #ff0033;animation:p 1.8s infinite;pointer-events:none;z-index:20;transform:translate(-50%,-50%)}
-        @keyframes p{0%,100%{opacity:.8;transform:translate(-50%,-50%)scale(1)}50%{opacity:1;transform:translate(-50%,-50%)scale(1.4)}}
-        .widget-label{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:#00ffff;font:bold 11px 'Orbitron',sans-serif;letter-spacing:3px;text-shadow:0 0 15px #00ffff;pointer-events:none;text-transform:uppercase}
+        #earth-widget {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            height: 280px;
+            border: 2px solid #00ffff44;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 50px #00ffff33;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #earth-canvas { display: block; border-radius: 50%; }
+        .japan-pin {
+            position: absolute;
+            top: 39%;
+            left: 73.5%;
+            font-size: 32px;
+            color: #ff0033;
+            text-shadow: 0 0 25px #ff0033;
+            animation: pulse 1.8s infinite;
+            pointer-events: none;
+            z-index: 20;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
+        }
+        .widget-label {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ffff;
+            font: bold 11px 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #00ffff;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
+    <!-- ویجت کره زمین -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="japan-pin">●</div>
@@ -61,14 +99,54 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- فقط و فقط بعد از لود کامل صفحه و Three.js — بدون هیچ ارور -->
+    <!-- کره زمین — کاملاً تضمینی و بدون هیچ ارور -->
     <script>
-        window.onload = function() {
-            const script = document.createElement('script');
-            script.src = 'assets/js/earth-final.js';
-            document.body.appendChild(script);
-        };
+        function initEarth() {
+            if (window.THREE && document.getElementById('earth-canvas')) {
+                const canvas = document.getElementById('earth-canvas');
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+                camera.position.z = 3.5;
 
+                const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+                renderer.setSize(280, 280);
+                renderer.setClearColor(0x000000, 0);
+
+                scene.add(new THREE.AmbientLight(0xffffff, 3));
+
+                const earth = new THREE.Mesh(
+                    new THREE.SphereGeometry(1, 64, 64),
+                    new THREE.MeshPhongMaterial({
+                        color: 0x002233,
+                        emissive: 0x003355,
+                        emissiveIntensity: 0.6,
+                        specular: 0x00ffff,
+                        shininess: 40
+                    })
+                );
+                scene.add(earth);
+
+                const dot = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.05, 32, 32),
+                    new THREE.MeshBasicMaterial({ color: 0xff0033 })
+                );
+                dot.position.set(1.05, 0.38, 0.25);
+                earth.add(dot);
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    const t = Date.now() * 0.004;
+                    dot.scale.setScalar(1 + Math.sin(t * 10) * 0.4);
+                    renderer.render(scene, camera);
+                }
+                animate();
+            } else {
+                setTimeout(initEarth, 100);
+            }
+        }
+        initEarth();
+
+        // پارتیکل‌ها
         particlesJS("particles", {
             "particles": {"number":{"value":80},"color":{"value":"#00ffff"},"opacity":{"value":0.3},"size":{"value":3},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.15},"move":{"enable":true,"speed":1.2}},
             "interactivity": {"events":{"onhover":{"enable":true,"mode":"repulse"}}},
