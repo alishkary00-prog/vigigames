@@ -7,7 +7,10 @@
     <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Three.js — حتماً داخل head لود می‌شه -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
+
     <style>
         #earth-widget {
             position: fixed;
@@ -21,8 +24,9 @@
             box-shadow: 0 0 50px #00ffff33;
             z-index: 10;
             pointer-events: none;
+            background: #000011; /* پس‌زمینه تیره برای fallback */
         }
-        #earth-canvas { display: block; border-radius: 50%; background: #000; }
+        #earth-canvas { display: block; border-radius: 50%; width: 100%; height: 100%; }
         .japan-pin {
             position: absolute;
             top: 39%;
@@ -54,6 +58,8 @@
     </style>
 </head>
 <body>
+
+    <!-- ویجت کره زمین -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="japan-pin">●</div>
@@ -90,11 +96,12 @@
         <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
+    <!-- اسکریپت‌های اصلی -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
+    <!-- پارتیکل‌ها -->
     <script>
-        // پارتیکل‌ها
         particlesJS("particles", {
             "particles": {
                 "number": { "value": 80 },
@@ -109,56 +116,72 @@
             },
             "retina_detect": true
         });
+    </script>
 
-        // کره زمین — تضمینی و بدون هیچ مشکلی
-        document.addEventListener('DOMContentLoaded', function() {
+    <!-- کره زمین — چک می‌کنه Three.js لود شده باشه، وگرنه retry می‌کنه -->
+    <script>
+        function initEarth() {
+            if (typeof THREE === 'undefined') {
+                console.log('Three.js لود نشده، دوباره چک می‌کنم...');
+                setTimeout(initEarth, 200);
+                return;
+            }
+
             const canvas = document.getElementById('earth-canvas');
             if (!canvas) return;
 
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-            camera.position.z = 2.5;  // نزدیک‌تر برای رندر بهتر
+            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+            camera.position.z = 2.8;  // نزدیک‌تر برای رندر کامل
 
             const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
             renderer.setSize(280, 280);
-            renderer.setClearColor(0x000011, 1);  // پس‌زمینه تیره آبی به جای سیاه کامل
+            renderer.setClearColor(0x000011, 1);  // پس‌زمینه تیره آبی
 
             // نور
-            const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
-            scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-            directionalLight.position.set(1, 1, 1);
-            scene.add(directionalLight);
+            scene.add(new THREE.AmbientLight(0xffffff, 2));
+            const dirLight = new THREE.DirectionalLight(0x00ffff, 3);
+            dirLight.position.set(5, 3, 5);
+            scene.add(dirLight);
 
-            // کره زمین — آبی نئونی خفن
-            const geometry = new THREE.SphereGeometry(1, 32, 32);
+            // کره زمین
+            const geometry = new THREE.SphereGeometry(1, 64, 64);
             const material = new THREE.MeshPhongMaterial({
-                color: 0x006994,
-                emissive: 0x001122,
-                emissiveIntensity: 0.5,
-                shininess: 100,
+                color: 0x004488,
+                emissive: 0x002244,
+                emissiveIntensity: 0.6,
+                shininess: 80,
                 specular: 0x00ffff
             });
             const earth = new THREE.Mesh(geometry, material);
             scene.add(earth);
 
-            // نقطه قرمز روی ژاپن
-            const dotGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+            // نقطه قرمز
+            const dotGeometry = new THREE.SphereGeometry(0.04, 32, 32);
             const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0033 });
             const dot = new THREE.Mesh(dotGeometry, dotMaterial);
-            dot.position.set(0.95, 0.35, 0.3);  // موقعیت دقیق ژاپن
+            dot.position.set(0.98, 0.36, 0.28);  // موقعیت ژاپن
             earth.add(dot);
 
-            // انیمیشن پالس و چرخش آروم
+            // انیمیشن
             function animate() {
                 requestAnimationFrame(animate);
                 const time = Date.now() * 0.001;
-                dot.scale.setScalar(1 + Math.sin(time * 5) * 0.5);  // پالس
-                earth.rotation.y += 0.002;  // چرخش آروم
+                dot.scale.setScalar(1 + Math.sin(time * 4) * 0.4);
+                earth.rotation.y += 0.001;
                 renderer.render(scene, camera);
             }
             animate();
-        });
+
+            console.log('کره زمین لود شد!');  // برای چک
+        }
+
+        // شروع بعد از لود کامل
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initEarth);
+        } else {
+            initEarth();
+        }
     </script>
 </body>
 </html>
