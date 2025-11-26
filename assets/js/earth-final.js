@@ -1,4 +1,4 @@
-// assets/js/earth-final.js - 100% CLEAN & WORKING
+// assets/js/earth-final.js - نسخه نهایی با تکسچرهای 100% کارکرده
 (() => {
     const canvas = document.getElementById('earth-canvas');
     if (!canvas || !window.THREE) return;
@@ -17,16 +17,19 @@
     const sun1 = new THREE.DirectionalLight(0xffffff, 4); sun1.position.set(5,3,5); scene.add(sun1);
     const sun2 = new THREE.DirectionalLight(0xffffff, 2.5); sun2.position.set(-5,-2,-5); scene.add(sun2);
 
-    const g = new THREE.Group(); g.rotation.z = 23.5 * Math.PI / 180; scene.add(g);
+    const g = new THREE.Group(); 
+    g.rotation.z = 23.5 * Math.PI / 180; 
+    scene.add(g);
 
     const tex = new THREE.TextureLoader();
 
+    // تکسچرها از CDN معتبر (بدون بلاک CORS)
     g.add(new THREE.Mesh(
         new THREE.SphereGeometry(1, 64, 64),
         new THREE.MeshPhongMaterial({
-            map: tex.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg'),
-            specularMap: tex.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg'),
-            normalMap: tex.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_normal_2048.jpg'),
+            map: tex.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
+            specularMap: tex.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg'),
+            normalMap: tex.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg'),
             shininess: 30
         })
     ));
@@ -34,8 +37,9 @@
     g.add(new THREE.Mesh(
         new THREE.SphereGeometry(1.012, 64, 64),
         new THREE.MeshStandardMaterial({
-            map: tex.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png'),
-            transparent: true, opacity: 0.85
+            map: tex.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png'),
+            transparent: true,
+            opacity: 0.85
         })
     ));
 
@@ -54,4 +58,7 @@
         renderer.render(scene, camera);
     };
     animate();
+
+    // رندر اولیه
+    renderer.render(scene, camera);
 })();
