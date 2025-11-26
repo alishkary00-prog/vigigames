@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
+
     <script type="importmap">
     {
         "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
         }
     }
     </script>
@@ -26,46 +25,40 @@
             left: 20px;
             width: 260px;
             height: 260px;
-            border: 2px solid #00ffff44;
+            border: 1px solid #00ffff55;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 40px #00ffff33ff33;
+            box-shadow: 0 0 35px #00ffff22;
             z-index: 10;
-            background: #000;
+            pointer-events: none; /* مهم: کاربر نمی‌تونه روش کلیک کنه یا بچرخونه */
         }
-        .scanlines-mini {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(transparent 50%, rgba(0,0,0,0.12) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
+        #earth-canvas {
+            display: block;
             border-radius: 50%;
-            opacity: 0.6;
         }
-        .japan-arrow {
+        .japan-pin {
             position: absolute;
             top: 38.8%;
             left: 73.5%;
-            font-size: 22px;
+            font-size: 20px;
             color: #ff0033;
-            text-shadow: 0 0 12px #ff0033, 0 0 25px #ff0033;
-            animation: blink 2.2s infinite;
+            text-shadow: 0 0 12px #ff0033;
+            animation: pulse 2s infinite;
             pointer-events: none;
-            z-index: 30;
+            z-index: 20;
             transform: translate(-50%, -50%);
         }
-        @keyframes blink {
-            0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
+        @keyframes pulse {
+            0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%,-50%) scale(1.4); opacity: 1; }
         }
         .widget-label {
             position: absolute;
-            bottom: 12px;
+            bottom: 14px;
             left: 50%;
             transform: translateX(-50%);
             color: #00ffff;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
+            font: 10px 'Orbitron', sans-serif;
             letter-spacing: 2px;
             text-shadow: 0 0 10px #00ffff;
             pointer-events: none;
@@ -74,12 +67,11 @@
 </head>
 <body>
 
-    <!-- کره ثابت + فلش دقیق روی ژاپن -->
+    <!-- کره کاملاً ثابت + فلش همیشه روی ژاپن -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
-        <div class="scanlines-mini"></div>
-        <div class="japan-arrow">▼</div>
-        <div class="widget-label">SYSTEM BREACH ACTIVE</div>
+        <div class="japan-pin">Target</div>
+        <div class="widget-label">BREACH IN PROGRESS</div>
     </div>
 
     <!-- بقیه سایت -->
@@ -114,7 +106,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script type="module" src="assets/js/earth-mini.js"></script>
+    <script type="module" src="assets/js/earth-final.js"></script>
     <script src="assets/js/main.js"></script>
 
     <script>
