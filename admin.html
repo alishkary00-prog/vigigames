@@ -3,176 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت - VIGIGAMES</title>
+    <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
+    <link rel="icon" href="data:,">
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        :root { --neon: #00ffff; --glass: rgba(10,15,40,0.4); }
-        body { background:#000; color:#e0f0ff; font-family:'Share Tech Mono',monospace; padding:20px; min-height:100vh; }
-        .login-screen { position:fixed; inset:0; background:rgba(0,0,0,0.98); display:flex; align-items:center; justify-content:center; z-index:999; backdrop-filter:blur(8px); }
-        .login-box { background:var(--glass); padding:50px; border-radius:20px; border:2px solid var(--neon); box-shadow:0 0 50px rgba(0,255,255,0.5); text-align:center; max-width:400px; width:90%; backdrop-filter:blur(15px); }
-        .login-box h2 { font-family:'Orbitron',sans-serif; font-size:3.5rem; color:var(--neon); margin-bottom:30px; text-shadow:0 0 20px var(--neon); }
-        input[type=password] { width:100%; padding:16px; background:#111; border:2px solid var(--neon); border-radius:12px; color:#fff; text-align:center; font-size:1.3rem; }
-        .login-btn { margin-top:25px; background:var(--neon); color:#000; padding:16px 50px; border:none; border-radius:50px; font-weight:bold; font-size:1.3rem; cursor:pointer; box-shadow:0 0 30px rgba(0,255,255,0.7); }
+        #earth-widget {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            height: 280px;
+            border: 2px solid #00ffff44;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 50px #00ffff33;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #earth-canvas { display: block; border-radius: 50%; }
 
-        .admin-panel { display:none; max-width:1200px; margin:0 auto; }
-        .header { text-align:center; padding:30px 0; border-bottom:2px solid var(--neon); margin-bottom:40px; }
-        .header h1 { font-family:'Orbitron',sans-serif; font-size:4rem; color:var(--neon); text-shadow:0 0 25px var(--neon); }
-
-        form { background:var(--glass); padding:30px; border-radius:20px; border:2px solid rgba(0,255,255,0.4); margin-bottom:40px; backdrop-filter:blur(12px); }
-        input, textarea, select { width:100%; padding:14px; margin:12px 0; background:rgba(255,255,255,0.05); border:2px solid var(--neon); border-radius:12px; color:#fff; font-size:1.1rem; }
-        button { background:var(--neon); color:#000; padding:14px 30px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; font-size:1.1rem; }
-
-        .download-section { text-align:center; padding:50px; background:var(--glass); border-radius:20px; border:3px solid var(--neon); margin:50px 0; }
-        .download-btn { background:#00ff88; color:#000; padding:20px 70px; font-size:1.6rem; box-shadow:0 0 40px rgba(0,255,136,0.7); }
-
-        .list { display:grid; gap:20px; margin-top:30px; }
-        .item { background:var(--glass); padding:20px; border-radius:16px; border:1px solid rgba(0,255,255,0.3); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; }
-        .item img { width:140px; height:90px; object-fit:cover; border-radius:12px; border:2px solid var(--neon); }
-        .success { color:#00ff88; font-weight:bold; text-align:center; font-size:1.3rem; margin:20px 0; }
-
-        @media (max-width:768px) { .item { flex-direction:column; text-align:center; } .header h1 { font-size:2.8rem; } }
+        .japan-pin {
+            position: absolute;
+            top: 39.2%;  /* دقیقاً مختصات ژاپن */
+            left: 73.8%; /* وسط جزیره */
+            font-size: 20px;
+            color: #ff0033;
+            text-shadow: 0 0 15px #ff0033;
+            animation: pulse 2.5s infinite;
+            pointer-events: none;
+            z-index: 20;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+        }
+        .widget-label {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ffff;
+            font: bold 10px 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00ffff;
+        }
     </style>
 </head>
 <body>
 
-    <!-- ورود -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-box">
-            <h2>VIGIGAMES</h2>
-            <input type="password" id="pass" placeholder="رمز عبور">
-            <button class="login-btn" onclick="login()">ورود</button>
-            <p style="color:#ff3366;margin-top:15px;display:none" id="error">رمز اشتباه!</p>
-        </div>
+    <div id="earth-widget">
+        <canvas id="earth-canvas"></canvas>
+        <div class="japan-pin">▼</div>
+        <div class="widget-label">BREACH IN PROGRESS</div>
     </div>
 
-    <!-- پنل -->
-    <div class="admin-panel" id="panel">
-        <div class="header"><h1>پنل مدیریت VIGIGAMES</h1></div>
+    <canvas id="particles"></canvas>
+    <div class="smoke"></div>
 
-        <!-- پروژه جدید -->
-        <form id="projectForm">
-            <h2 style="color:var(--neon);margin-bottom:20px;">پروژه جدید</h2>
-            <input type="text" id="pName" placeholder="نام پروژه" required>
-            <textarea id="pDesc" rows="4" placeholder="توضیحات" required></textarea>
-            <input type="url" id="pImage" placeholder="لینک عکس" required>
-            <select id="pStatus">
-                <option value="in-progress">در حال ساخت</option>
-                <option value="completed">تکمیل شده</option>
-                <option value="cancelled">لغو شده</option>
-            </select>
-            <button type="submit">ثبت پروژه</button>
-        </form>
-
-        <!-- تبلیغ جدید -->
-        <form id="adForm">
-            <h2 style="color:var(--neon);margin-bottom:20px;">تبلیغ / اسپانسر جدید</h2>
-            <input type="text" id="adTitle" placeholder="نام اسپانسر (مثل: تپسل)" required>
-            <input type="url" id="adImage" placeholder="لینک بنر (728x90 یا 300x250)" required>
-            <input type="url" id="adLink" placeholder="لینک کلیک" required>
-            <label><input type="checkbox" id="adActive" checked> فعال باشد</label>
-            <button type="submit">اضافه کردن تبلیغ</button>
-        </form>
-
-        <!-- دانلود -->
-        <div class="download-section">
-            <h3 style="color:var(--neon);margin-bottom:20px;font-size:1.8rem;">برای اعمال تغییرات در سایت:</h3>
-            <button class="download-btn" onclick="downloadJSON()">دانلود projects.json</button>
-            <p style="margin-top:20px;color:#99ccff;">فایل رو در GitHub → data/projects.json آپلود کن</p>
+    <section class="hero">
+        <div>
+            <h1 class="glitch">VIGIGAMES</h1>
+            <p class="subtitle">تاریکی فقط آغاز ماجراست...</p>
         </div>
-        <div class="success" id="msg"></div>
+    </section>
 
-        <h2 style="color:var(--neon);margin:40px 0 20px;">پروژه‌ها</h2>
-        <div class="list" id="projectsList"></div>
+    <section class="projects">
+        <h2>پروژه‌های من</h2>
+        <div class="grid" id="projectsGrid">
+            <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
+                به زودی...<br>
+                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
+            </div>
+        </div>
+    </section>
 
-        <h2 style="color:var(--neon);margin:40px 0 20px;">تبلیغات / اسپانسرها</h2>
-        <div class="list" id="adsList"></div>
-    </div>
+    <section class="ads-section">
+        <h2>حمایت شده توسط</h2>
+        <div class="ads-grid" id="adsGrid"></div>
+    </section>
+
+    <footer>
+        © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
+        <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script type="module" src="assets/js/earth-final.js"></script>
+    <script src="assets/js/main.js"></script>
 
     <script>
-        const PASS = "13822";
-        let projects = JSON.parse(localStorage.getItem("vigi_projects") || "[]");
-        let ads = JSON.parse(localStorage.getItem("vigi_ads") || "[]");
-
-        function login() {
-            if (document.getElementById("pass").value === PASS) {
-                document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("panel").style.display = "block";
-                render();
-            } else document.getElementById("error").style.display = "block";
-        }
-
-        function showMsg(text) {
-            const m = document.getElementById("msg");
-            m.textContent = text;
-            setTimeout(() => m.textContent = "", 4000);
-        }
-
-        function downloadJSON() {
-            const data = { projects, ads };
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url; a.download = "projects.json"; a.click();
-            showMsg("فایل projects.json دانلود شد! حالا آپلود کن");
-        }
-
-        function render() {
-            // پروژه‌ها
-            const pl = document.getElementById("projectsList");
-            pl.innerHTML = projects.length === 0 ? "<p style='text-align:center;color:#6688aa;padding:50px;'>هیچ پروژه‌ای نیست</p>" : "";
-            projects.forEach((p,i) => {
-                pl.innerHTML += `<div class="item">
-                    <img src="${p.image}" onerror="this.src='https://placehold.co/140x90/111/00ffff?text=IMG'">
-                    <div><strong style="color:var(--neon);">${p.name}</strong><br>${p.desc.substring(0,80)}...</div>
-                    <button onclick="projects.splice(${i},1);save();render();downloadJSON()" style="background:#ff3366;">حذف</button>
-                </div>`;
-            });
-
-            // تبلیغات
-            const al = document.getElementById("adsList");
-            al.innerHTML = ads.length === 0 ? "<p style='text-align:center;color:#6688aa;padding:50px;'>هیچ تبلیغی نیست</p>" : "";
-            ads.forEach((ad,i) => {
-                al.innerHTML += `<div class="item">
-                    <img src="${ad.image}" onerror="this.style.display='none'">
-                    <div><strong style="color:var(--neon);">${ad.title}</strong><br>${ad.link}</div>
-                    <label><input type="checkbox" ${ad.active!==false?"checked":""} onchange="ads[${i}].active=this.checked;save();downloadJSON()"> فعال</label>
-                    <button onclick="ads.splice(${i},1);save();render();downloadJSON()" style="background:#ff3366;">حذف</button>
-                </div>`;
-            });
-        }
-
-        function save() {
-            localStorage.setItem("vigi_projects", JSON.stringify(projects));
-            localStorage.setItem("vigi_ads", JSON.stringify(ads));
-        }
-
-        // فرم پروژه
-        document.getElementById("projectForm").onsubmit = e => {
-            e.preventDefault();
-            projects.push({
-                name: e.target.pName.value,
-                desc: e.target.pDesc.value,
-                image: e.target.pImage.value || "https://placehold.co/800x600/111/00ffff?text=VIGIGAMES",
-                status: e.target.pStatus.value
-            });
-            save(); render(); downloadJSON(); e.target.reset();
-            showMsg("پروژه اضافه شد!");
-        };
-
-        // فرم تبلیغ
-        document.getElementById("adForm").onsubmit = e => {
-            e.preventDefault();
-            ads.push({
-                title: e.target.adTitle.value,
-                image: e.target.adImage.value,
-                link: e.target.adLink.value,
-                active: e.target.adActive.checked
-            });
-            save(); render(); downloadJSON(); e.target.reset();
-            showMsg("تبلیغ اضافه شد!");
-        };
+        particlesJS("particles", {
+            "particles": { "number": { "value": 80 }, "color": { "value": "#00ffff" }, "opacity": { "value": 0.3 }, "size": { "value": 3 }, "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 }, "move": { "enable": true, "speed": 1.2 } },
+            "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
+            "retina_detect": true
+        });
     </script>
 </body>
 </html>
