@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
 
-    <!-- فقط این یه خط — جدیدترین نسخه بدون هیچ مشکلی -->
+    <!-- فونت سایبرپانک -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Three.js - فقط همین یک خط (جدیدترین نسخه بدون مشکل) -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
+
+    <!-- استایل اصلی -->
+    <link rel="stylesheet" href="assets/css/style.css">
 
     <style>
         #earth-widget{position:fixed;bottom:20px;left:20px;width:280px;height:280px;border:2px solid #00ffff44;border-radius:50%;overflow:hidden;box-shadow:0 0 50px #00ffff33;z-index:10;pointer-events:none}
         #earth-canvas{display:block;border-radius:50%}
         .japan-pin{position:absolute;top:39%;left:73.5%;font-size:32px;color:#ff0033;text-shadow:0 0 25px #ff0033;animation:p 1.8s infinite;pointer-events:none;z-index:20;transform:translate(-50%,-50%)}
         @keyframes p{0%,100%{opacity:.8;transform:translate(-50%,-50%)scale(1)}50%{opacity:1;transform:translate(-50%,-50%)scale(1.4)}}
-        .widget-label{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:#00ffff;font:bold 11px 'Orbitron';letter-spacing:3px;text-shadow:0 0 15px #00ffff;pointer-events:none;text-transform:uppercase}
+        .widget-label{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:#00ffff;font:bold 11px 'Orbitron',sans-serif;letter-spacing:3px;text-shadow:0 0 15px #00ffff;pointer-events:none;text-transform:uppercase}
     </style>
 </head>
 <body>
@@ -37,28 +41,46 @@
         </div>
     </section>
 
-    <section class="projects"><h2>پروژه‌های من</h2><div class="grid" id="projectsGrid"><div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">به زودی...<br><span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span></div></div></section>
+    <section class="projects">
+        <h2>پروژه‌های من</h2>
+        <div class="grid" id="projectsGrid">
+            <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
+                به زودی...<br>
+                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
+            </div>
+        </div>
+    </section>
 
-    <section class="ads-section"><h2>حمایت شده توسط</h2><div class="ads-grid" id="adsGrid"></div></section>
+    <section class="ads-section">
+        <h2>حمایت شده توسط</h2>
+        <div class="ads-grid" id="adsGrid"></div>
+    </section>
 
-    <footer>© ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br><a href="admin.html" class="admin-link">ورود به پنل مدیریت</a></footer>
+    <footer>
+        © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
+        <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
+    </footer>
 
+    <!-- اسکریپت‌های اصلی -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- کره زمین — کاملاً امن و بدون خطا -->
+    <!-- اجرای کره زمین فقط بعد از لود کامل Three.js (بدون هیچ اروری) -->
     <script>
         window.addEventListener('load', () => {
             if (window.THREE) {
                 const s = document.createElement('script');
                 s.src = 'assets/js/earth-final.js';
                 document.body.appendChild(s);
-            } else {
-                setTimeout(arguments.callee, 100); // اگه هنوز لود نشده، دوباره چک کن
             }
         });
 
-        particlesJS("particles", {"particles":{"number":{"value":80},"color":{"value":"#00ffff"},"opacity":{"value":0.3},"size":{"value":3},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.15},"move":{"enable":true,"speed":1.2}},"interactivity":{"events":{"onhover":{"enable":true,"mode":"repulse"}}},"retina_detect":true});
+        // پارتیکل‌های نئونی
+        particlesJS("particles", {
+            "particles": {"number":{"value":80},"color":{"value":"#00ffff"},"opacity":{"value":0.3},"size":{"value":3},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.15},"move":{"enable":true,"speed":1.2}},
+            "interactivity": {"events":{"onhover":{"enable":true,"mode":"repulse"}}},
+            "retina_detect": true
+        });
     </script>
 </body>
 </html>
