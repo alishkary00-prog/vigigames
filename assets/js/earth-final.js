@@ -1,4 +1,4 @@
-// assets/js/earth-final.js - نسخه ابدی و بدون نقص
+// assets/js/earth-final.js - نسخه 100% آفلاین و بدون هیچ ارور و سیاه شدن
 (() => {
     const canvas = document.getElementById('earth-canvas');
     if (!canvas || !window.THREE) return;
@@ -13,49 +13,59 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 2.2));
-    scene.add((l => (l.position.set(5,3,5), l))(new THREE.DirectionalLight(0xffffff, 4)));
-    scene.add((l => (l.position.set(-5,-2,-5), l))(new THREE.DirectionalLight(0xffffff, 2.5)));
+    // نورپردازی خفن
+    scene.add(new THREE.AmbientLight(0xffffff, 2.5));
+    const light1 = new THREE.DirectionalLight(0xffffff, 4);
+    light1.position.set(5, 3, 5);
+    scene.add(light1);
+    const light2 = new THREE.DirectionalLight(0x0088ff, 2);
+    light2.position.set(-5, -2, -5);
+    scene.add(light2);
 
-    const earth = new THREE.Group();
-    earth.rotation.z = 23.5 * Math.PI / 180;
-    scene.add(earth);
+    const earthGroup = new THREE.Group();
+    earthGroup.rotation.z = 23.5 * Math.PI / 180;
+    scene.add(earthGroup);
 
-    const loader = new THREE.TextureLoader();
-
-    // تکسچرها از jsDelivr — ۱۰۰٪ همیشه کار می‌کنه
-    earth.add(new THREE.Mesh(
+    // زمین بدون تکسچر (رنگ آبی تیره با هایلایت نئونی) — 100% آفلاین
+    const earthMesh = new THREE.Mesh(
         new THREE.SphereGeometry(1, 64, 64),
         new THREE.MeshPhongMaterial({
-            map: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_atmos_2048.jpg'),
-            specularMap: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_specular_2048.jpg'),
-            normalMap: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_normal_2048.jpg'),
-            shininess: 30
+            color: 0x001122,
+            emissive: 0x002233,
+            emissiveIntensity: 0.4,
+            specular: 0x00ffff,
+            shininess: 50
         })
-    ));
+    );
+    earthGroup.add(earthMesh);
 
-    earth.add(new THREE.Mesh(
-        new THREE.SphereGeometry(1.012, 64, 64),
-        new THREE.MeshStandardMaterial({
-            map: loader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/planets/earth_clouds_1024.png'),
-            transparent: true,
-            opacity: 0.85
-        })
-    ));
+    // حلقه نئونی دور زمین
+    const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(1.1, 0.015, 16, 100),
+        new THREE.MeshBasicMaterial({ color: 0x00ffff })
+    );
+    ring.rotation.x = Math.PI / 2;
+    earthGroup.add(ring);
 
-    const dot = new THREE.Mesh(
-        new THREE.SphereGeometry(0.032, 32, 32),
+    // نقطه قرمز پالس‌دار روی ژاپن
+    const breachDot = new THREE.Mesh(
+        new THREE.SphereGeometry(0.04, 32, 32),
         new THREE.MeshBasicMaterial({ color: 0xff0033 })
     );
-    dot.position.set(1.05, 0.38, 0.25);
-    earth.add(dot);
+    breachDot.position.set(1.05, 0.38, 0.25);
+    earthGroup.add(breachDot);
 
+    // انیمیشن پالس نقطه قرمز
     const animate = () => {
         requestAnimationFrame(animate);
-        const t = Date.now() * 0.003;
-        dot.scale.setScalar(1 + Math.sin(t * 8) * 0.3);
-        dot.material.opacity = 0.7 + Math.sin(t * 6) * 0.3;
+        const t = Date.now() * 0.004;
+        breachDot.scale.setScalar(1 + Math.sin(t * 10) * 0.4);
+        breachDot.material.opacity = 0.7 + Math.sin(t * 8) * 0.3;
+        ring.rotation.z += 0.001;
         renderer.render(scene, camera);
     };
     animate();
+
+    // رندر اولیه
+    renderer.render(scene, camera);
 })();
