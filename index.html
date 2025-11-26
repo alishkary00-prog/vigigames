@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     
-    <!-- فونت‌ها -->
+    <!-- رفع ارور favicon -->
+    <link rel="icon" href="data:,">
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <!-- Three.js Import Map -->
     <script type="importmap">
     {
         "imports": {
@@ -18,63 +19,80 @@
         }
     }
     </script>
-    
+
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* کره سه‌بعدی تمام صفحه */
-        #earth-container {
+        /* کره کوچک گوشه پایین-راست */
+        #earth-widget {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -10;
-            pointer-events: none;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            height: 280px;
+            border: 2px solid #00ffff;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 40px #00ffff, inset 0 0 40px rgba(0,255,255,0.2);
+            z-index: 10;
+            pointer-events: auto;
+            background: radial-gradient(circle at 30% 30%, #001122, #000);
         }
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.1) 50%);
+        #earth-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        .scanlines-mini {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0,0,0,0.15) 50%);
             background-size: 100% 4px;
             pointer-events: none;
-            z-index: 1;
-            opacity: 0.4;
+            border-radius: 50%;
         }
-        /* فلش قرمز نزدیک ژاپن (هک فعال!) */
-        .japan-hack {
-            position: fixed;
+        /* فلش هک روی ژاپن */
+        .hack-marker {
+            position: absolute;
             top: 38%;
-            left: 78%;
-            font-size: 3rem;
+            left: 72%;
+            font-size: 28px;
             color: #ff0033;
-            text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0033;
-            animation: pulse 1.5s infinite, float 4s infinite ease-in-out;
-            z-index: 10;
+            text-shadow: 0 0 20px #ff0033;
+            animation: pulse 1.8s infinite;
             pointer-events: none;
-            transform: translate(-50%, -50%) rotate(45deg);
+            z-index: 20;
         }
         @keyframes pulse {
-            0%, 100% { opacity: 0.7; transform: scale(1) rotate(45deg); }
-            50% { opacity: 1; transform: scale(1.3) rotate(45deg); }
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.4); }
         }
-        @keyframes float {
-            0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(45deg); }
-            50% { transform: translate(-50%, -50%) translateY(-20px) rotate(45deg); }
+        .widget-label {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ffff;
+            font-family: 'Orbitron';
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00ffff;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- کره سه‌بعدی + ستاره‌ها + جو زمین -->
-    <div id="earth-container"></div>
-    <div class="scanlines"></div>
-    <div class="japan-hack">▲</div>
+    <!-- کره کوچک گوشه با فلش هک ژاپن -->
+    <div id="earth-widget">
+        <canvas id="earth-canvas"></canvas>
+        <div class="scanlines-mini"></div>
+        <div class="hack-marker">TARGET ACQUIRED</div>
+        <div class="widget-label">GLOBAL DOMINATION ACTIVE</div>
+    </div>
 
-    <!-- پس‌زمینه دود و پارتیکل -->
+    <!-- بقیه محتوای سایت (همه چی مثل قبل) -->
     <canvas id="particles"></canvas>
     <div class="smoke"></div>
 
-    <!-- هدر اصلی -->
     <section class="hero">
         <div>
             <h1 class="glitch">VIGIGAMES</h1>
@@ -82,45 +100,34 @@
         </div>
     </section>
 
-    <!-- بخش پروژه‌ها -->
     <section class="projects">
         <h2>پروژه‌های من</h2>
         <div class="grid" id="projectsGrid">
-            <div style="grid-column:1/-1; text-align:center; padding:120px; color:#334455; font-size:2rem;">
+            <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
                 به زودی...<br>
-                <span style="font-size:1.1rem; color:#00ffff88;">در سایه‌ها منتظر باش</span>
+                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
             </div>
         </div>
     </section>
 
-    <!-- بخش تبلیغات -->
     <section class="ads-section">
         <h2>حمایت شده توسط</h2>
         <div class="ads-grid" id="adsGrid"></div>
     </section>
 
-    <!-- فوتر -->
     <footer>
         © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
-        <a href="admin.html" class="admin-link">ورود به پنل مدیریت →</a>
+        <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
-    <!-- پارتیکل + Three.js + Main.js -->
+    <!-- اسکریپت‌ها -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script type="module" src="assets/js/earth.js"></script>
+    <script type="module" src="assets/js/earth-mini.js"></script>
     <script src="assets/js/main.js"></script>
 
     <script>
-        // پارتیکل
         particlesJS("particles", {
-            "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#00ffff" },
-                "opacity": { "value": 0.3, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#00ffff", "opacity": 0.15, "width": 1 },
-                "move": { "enable": true, "speed": 1.2, "direction": "none", "random": true }
-            },
+            "particles": { "number": { "value": 80 }, "color": { "value": "#00ffff" }, "opacity": { "value": 0.3 }, "size": { "value": 3 }, "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 }, "move": { "enable": true, "speed": 1.2 } },
             "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
             "retina_detect": true
         });
