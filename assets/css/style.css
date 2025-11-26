@@ -1,8 +1,9 @@
 /* VIGIGAMES — Final Dark Cyberpunk Theme 2025 */
-/* آخرین ویرایش: شامل پروژه‌ها + تبلیغات + ریسپانسیو کامل */
+/* آخرین ویرایش: کاملاً هماهنگ با ویجت ثابت ژاپن + نقطه قرمز + BREACH ACTIVE */
 
 :root {
     --neon: #00ffff;
+    --neon-red: #ff0033;
     --dark: #0d0d1a;
     --glass: rgba(10, 15, 40, 0.4);
     --text: #e0f0ff;
@@ -21,6 +22,8 @@ body {
     font-family: 'Share Tech Mono', monospace;
     overflow-x: hidden;
     direction: rtl;
+    min-height: 100vh;
+    position: relative;
 }
 
 /* پس‌زمینه پارتیکل و دود */
@@ -34,8 +37,9 @@ body {
     position: fixed;
     inset: 0;
     background: 
-        radial-gradient(circle at 25% 75%, rgba(0,255,255,0.07) 0%, transparent 50%),
-        radial-gradient(circle at 75% 25%, rgba(0,100,255,0.08) 0%, transparent 50%);
+        radial-gradient(circle at 20% 80%, rgba(0,255,255,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0,100,255,0.07) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255,0,51,0.03) 0%, transparent 60%);
     z-index: -1;
     pointer-events: none;
 }
@@ -56,34 +60,49 @@ body {
     font-weight: 900;
     letter-spacing: 12px;
     color: var(--neon);
-    text-shadow: 0 0 10px var(--neon), 0 0 30px var(--neon);
-    animation: glitch 3s infinite;
+    text-shadow: 
+        0 0 10px var(--neon),
+        0 0 30px var(--neon),
+        0 0 60px var(--neon);
+    animation: glitch 4s infinite;
     user-select: none;
+    pointer-events: none;
 }
 
 @keyframes glitch {
-    0%, 100% { text-shadow: 0 0 10px var(--neon), 0 0 30px var(--neon); }
-    20% { text-shadow: 3px 3px 10px #ff00ff, -3px -3px 20px #00ff00; }
-    40% { text-shadow: -4px 4px 15px #ff00ff, 4px -4px 25px #00ff00; }
+    0%, 100% { 
+        text-shadow: 0 0 10px var(--neon), 0 0 30px var(--neon), 0 0 60px var(--neon);
+    }
+    14% { 
+        text-shadow: 3px 3px 0 #ff00ff, -3px -3px 0 #00ff00;
+    }
+    28% { 
+        text-shadow: -4px 4px 0 #ff00ff, 4px -4px 0 #00ff00;
+    }
 }
 
 .subtitle {
-    font-size: 1.7rem;
-    margin-top: 30px;
+    font-size: 1.8rem;
+    margin-top: 35px;
     color: var(--subtext);
-    letter-spacing: 6px;
+    letter-spacing: 7px;
     overflow: hidden;
     white-space: nowrap;
-    border-right: 3px solid var(--neon);
-    animation: typing 4s steps(35) infinite alternate, blink 0.7s infinite;
+    border-right: 4px solid var(--neon);
+    animation: typing 5s steps(38) infinite alternate, blink 0.7s infinite;
 }
 
-@keyframes typing { from { width: 0 } to { width: 34ch } }
-@keyframes blink { 50% { border-color: transparent } }
+@keyframes typing { 
+    from { width: 0 } 
+    to { width: 38ch } 
+}
+@keyframes blink { 
+    50% { border-color: transparent } 
+}
 
 /* بخش پروژه‌ها */
 .projects {
-    padding: 120px 20px;
+    padding: 140px 20px;
     min-height: 100vh;
     background: var(--dark);
 }
@@ -91,16 +110,16 @@ body {
 .projects h2 {
     font-family: 'Orbitron', sans-serif;
     text-align: center;
-    font-size: 4rem;
-    margin-bottom: 80px;
+    font-size: 4.2rem;
+    margin-bottom: 90px;
     color: var(--neon);
-    text-shadow: 0 0 20px var(--neon);
+    text-shadow: 0 0 25px var(--neon);
 }
 
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 40px;
+    gap: 45px;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -108,143 +127,149 @@ body {
 .card {
     position: relative;
     background: var(--glass);
-    border: 1px solid rgba(0,255,255,0.2);
-    border-radius: 16px;
+    border: 1px solid rgba(0,255,255,0.25);
+    border-radius: 18px;
     overflow: hidden;
-    backdrop-filter: blur(12px);
-    transition: all 0.6s cubic-bezier(0.23,1,0.32,1);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+    backdrop-filter: blur(14px);
+    transition: all 0.7s cubic-bezier(0.23,1,0.32,1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9);
 }
 
 .card:hover {
-    transform: translateY(-20px);
+    transform: translateY(-25px);
     border-color: var(--neon);
-    box-shadow: 0 0 40px rgba(0,255,255,0.5);
+    box-shadow: 0 0 50px rgba(0,255,255,0.6);
 }
 
 .card img {
     width: 100%;
-    height: 240px;
+    height: 250px;
     object-fit: cover;
-    filter: brightness(0.8);
-    transition: 0.5s;
+    filter: brightness(0.75) contrast(1.1);
+    transition: 0.7s;
 }
 
 .card:hover img {
-    filter: brightness(1.2) saturate(1.4);
+    filter: brightness(1.3) saturate(1.5);
 }
 
 .card h3 {
-    padding: 20px 20px 8px;
-    font-size: 1.7rem;
+    padding: 25px 25px 10px;
+    font-size: 1.8rem;
     color: var(--neon);
+    text-shadow: 0 0 10px var(--neon);
 }
 
 .card p {
-    padding: 0 20px 20px;
-    color: #99ccff;
-    line-height: 1.8;
-    font-size: 1rem;
+    padding: 0 25px 25px;
+    color: #aaddff;
+    line-height: 1.9;
+    font-size: 1.05rem;
 }
 
 .status {
     position: absolute;
-    top: 15px;
-    left: 15px;
-    padding: 6px 16px;
-    background: rgba(0,255,255,0.2);
+    top: 16px;
+    left: 16px;
+    padding: 8px 18px;
+    background: rgba(0,255,255,0.25);
     color: var(--neon);
     border-radius: 30px;
-    font-size: 0.85rem;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(0,255,255,0.3);
+    font-size: 0.9rem;
+    font-weight: bold;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(0,255,255,0.4);
+    text-shadow: 0 0 10px var(--neon);
 }
 
-/* بخش تبلیغات / حمایت شده توسط */
+/* بخش تبلیغات */
 .ads-section {
-    padding: 100px 20px;
+    padding: 120px 20px;
     background: linear-gradient(to bottom, #0a0a15, #000);
     text-align: center;
 }
 
-.ads h2 {
+.ads-section h2 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 3.5rem;
+    font-size: 3.6rem;
     color: var(--neon);
-    text-shadow: 0 0 20px var(--neon);
-    margin-bottom: 60px;
+    text-shadow: 0 0 25px var(--neon);
+    margin-bottom: 70px;
 }
 
 .ads-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 30px;
+    gap: 35px;
     max-width: 1400px;
     margin: 0 auto;
 }
 
 .ad-link {
-    display: inline-block;
-    border-radius: 16px;
+    display: block;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
-    transition: all 0.4s ease;
-    opacity: 0.9;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.25);
+    transition: all 0.5s ease;
+    opacity: 0.92;
 }
 
 .ad-link:hover {
     opacity: 1;
-    transform: translateY(-10px) scale(1.03);
-    box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+    transform: translateY(-12px) scale(1.04);
+    box-shadow: 0 0 55px rgba(0, 255, 255, 0.7);
 }
 
 .ad-link img {
     display: block;
-    border-radius: 16px;
-    transition: all 0.4s ease;
+    border-radius: 18px;
+    transition: all 0.5s ease;
 }
 
 /* فوتر */
 footer {
     text-align: center;
-    padding: 60px 20px;
+    padding: 80px 20px;
     background: #000;
     border-top: 1px solid #111;
     color: #555;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    letter-spacing: 1px;
 }
 
 .admin-link {
     color: var(--neon);
     text-decoration: none;
-    font-size: 1.1rem;
-    margin-top: 10px;
+    font-size: 1.2rem;
+    margin-top: 15px;
     display: inline-block;
-    transition: 0.3s;
+    transition: 0.4s;
+    text-shadow: 0 0 10px var(--neon);
 }
 
 .admin-link:hover {
     color: #fff;
-    text-shadow: 0 0 15px var(--neon);
+    text-shadow: 0 0 20px var(--neon);
 }
 
-/* ریسپانسیو */
+/* ریسپانسیو کامل */
 @media (max-width: 992px) {
     .glitch { font-size: 6rem; letter-spacing: 8px; }
     .subtitle { font-size: 1.5rem; }
-    .projects h2, .ads h2 { font-size: 3.2rem; }
+    .projects h2, .ads-section h2 { font-size: 3.4rem; }
 }
 
 @media (max-width: 768px) {
     .glitch { font-size: 4.5rem; letter-spacing: 6px; }
     .subtitle { font-size: 1.3rem; }
-    .projects h2, .ads h2 { font-size: 2.8rem; }
-    .grid { grid-template-columns: 1fr; padding: 0 15px; }
-    .ads-grid { gap: 20px; }
+    .projects h2, .ads-section h2 { font-size: 3rem; }
+    .grid { grid-template-columns: 1fr; padding: 0 20px; }
 }
 
 @media (max-width: 480px) {
-    .glitch { font-size: 3.8rem; letter-spacing: 4px; }
-    .projects h2, .ads h2 { font-size: 2.4rem; }
+    .glitch { font-size: 3.6rem; letter-spacing: 4px; }
+    .subtitle { font-size: 1.1rem; }
+    .projects h2, .ads-section h2 { font-size: 2.6rem; }
+    #earth-widget { width: 240px; height: 240px; bottom: 15px; left: 15px; }
 }
