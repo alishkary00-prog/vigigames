@@ -7,7 +7,7 @@
     
     <!-- رفع ارور favicon -->
     <link rel="icon" href="data:,">
-
+    
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
@@ -22,7 +22,6 @@
 
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* کره کوچک گوشه پایین-راست */
         #earth-widget {
             position: fixed;
             bottom: 20px;
@@ -32,14 +31,9 @@
             border: 2px solid #00ffff;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 40px #00ffff, inset 0 0 40px rgba(0,255,255,0.2);
+            box-shadow: 0 0 50px #00ffff, inset 0 0 40px rgba(0,255,255,0.2);
             z-index: 10;
-            pointer-events: auto;
             background: radial-gradient(circle at 30% 30%, #001122, #000);
-        }
-        #earth-canvas {
-            width: 100%;
-            height: 100%;
         }
         .scanlines-mini {
             position: absolute;
@@ -49,25 +43,51 @@
             pointer-events: none;
             border-radius: 50%;
         }
-        /* فلش هک روی ژاپن */
-        .hack-marker {
+        .hack-pin {
             position: absolute;
-            top: 38%;
-            left: 72%;
-            font-size: 28px;
-            color: #ff0033;
-            text-shadow: 0 0 20px #ff0033;
-            animation: pulse 1.8s infinite;
+            top: 38.5%;
+            left: 73%;
+            transform: translate(-50%, -50%);
             pointer-events: none;
-            z-index: 20;
+            z-index: 30;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.4); }
+        .pulse-ring {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 3px solid #ff0033;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulseRing 2s infinite;
+        }
+        .pulse-ring.delay { animation-delay: 1s; }
+        .marker {
+            position: absolute;
+            color: #ff0033;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+            top: -32px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-shadow: 0 0 20px #ff0033;
+            animation: glowText 2s infinite alternate;
+        }
+        @keyframes pulseRing {
+            0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+            100% { transform: translate(-50%,-50%) scale(1.8); opacity: 0; }
+        }
+        @keyframes glowText {
+            from { text-shadow: 0 0 10px #ff0033; }
+            to { text-shadow: 0 0 30px #ff0033, 0 0 50px #ff0033; }
         }
         .widget-label {
             position: absolute;
-            bottom: 8px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             color: #00ffff;
@@ -81,15 +101,19 @@
 </head>
 <body>
 
-    <!-- کره کوچک گوشه با فلش هک ژاپن -->
+    <!-- کره کوچک + پین هک روی ژاپن -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="scanlines-mini"></div>
-        <div class="hack-marker">TARGET ACQUIRED</div>
+        <div class="hack-pin">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring delay"></div>
+            <div class="marker">TARGET LOCKED</div>
+        </div>
         <div class="widget-label">GLOBAL DOMINATION ACTIVE</div>
     </div>
 
-    <!-- بقیه محتوای سایت (همه چی مثل قبل) -->
+    <!-- بقیه سایت -->
     <canvas id="particles"></canvas>
     <div class="smoke"></div>
 
@@ -104,8 +128,7 @@
         <h2>پروژه‌های من</h2>
         <div class="grid" id="projectsGrid">
             <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
-                به زودی...<br>
-                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
+                به زودی...<br><span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
             </div>
         </div>
     </section>
@@ -120,7 +143,6 @@
         <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
-    <!-- اسکریپت‌ها -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script type="module" src="assets/js/earth-mini.js"></script>
     <script src="assets/js/main.js"></script>
