@@ -23,58 +23,54 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            width: 260px;
-            height: 260px;
-            border: 1px solid #00ffff55;
+            width: 280px;
+            height: 280px;
+            border: 2px solid #00ffff44;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 35px #00ffff22;
+            box-shadow: 0 0 50px #00ffff33;
             z-index: 10;
-            pointer-events: none; /* مهم: کاربر نمی‌تونه روش کلیک کنه یا بچرخونه */
+            pointer-events: none;
         }
-        #earth-canvas {
-            display: block;
-            border-radius: 50%;
-        }
+        #earth-canvas { display: block; border-radius: 50%; }
+
         .japan-pin {
             position: absolute;
-            top: 38.8%;
+            top: 39%;
             left: 73.5%;
-            font-size: 20px;
+            font-size: 22px;
             color: #ff0033;
-            text-shadow: 0 0 12px #ff0033;
+            text-shadow: 0 0 15px #ff0033;
             animation: pulse 2s infinite;
             pointer-events: none;
             z-index: 20;
             transform: translate(-50%, -50%);
         }
         @keyframes pulse {
-            0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
-            50% { transform: translate(-50%,-50%) scale(1.4); opacity: 1; }
+            0%,100% { opacity: 0.8; transform: translate(-50%,-50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%,-50%) scale(1.3); }
         }
         .widget-label {
             position: absolute;
-            bottom: 14px;
+            bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
             color: #00ffff;
-            font: 10px 'Orbitron', sans-serif;
+            font: bold 11px 'Orbitron', sans-serif;
             letter-spacing: 2px;
-            text-shadow: 0 0 10px #00ffff;
+            text-shadow: 0 0 12px #00ffff;
             pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- کره کاملاً ثابت + فلش همیشه روی ژاپن -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="japan-pin">Target</div>
         <div class="widget-label">BREACH IN PROGRESS</div>
     </div>
 
-    <!-- بقیه سایت -->
     <canvas id="particles"></canvas>
     <div class="smoke"></div>
 
