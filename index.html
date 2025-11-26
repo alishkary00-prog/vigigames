@@ -6,12 +6,14 @@
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
 
+    <!-- فونت‌های سایبرپانک -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
 
-    <!-- Three.js + TextureLoader -->
+    <!-- Three.js — فقط همین یه خط کافیه (نسخه جدید، بدون warning و بدون نیاز به فایل اضافی) -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/TextureLoader.js"></script>
+
+    <!-- استایل اصلی -->
+    <link rel="stylesheet" href="assets/css/style.css">
 
     <style>
         #earth-widget {
@@ -53,6 +55,7 @@
             transform: translateX(-50%);
             color: #00ffff;
             font: bold 11px 'Orbitron', sans-serif;
+            font-weight: bold;
             letter-spacing: 3px;
             text-shadow: 0 0 15px #00ffff;
             pointer-events: none;
@@ -62,15 +65,18 @@
 </head>
 <body>
 
+    <!-- ویجت کره زمین با هک ژاپن -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="japan-pin">●</div>
         <div class="widget-label">BREACH ACTIVE</div>
     </div>
 
+    <!-- پس‌زمینه -->
     <canvas id="particles"></canvas>
     <div class="smoke"></div>
 
+    <!-- محتوای اصلی -->
     <section class="hero">
         <div>
             <h1 class="glitch">VIGIGAMES</h1>
@@ -98,24 +104,21 @@
         <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
-    <!-- فقط بعد از لود کامل صفحه و Three.js -->
+    <!-- اسکریپت‌ها -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- این قسمت مهم‌ترین بخشه — تضمین می‌کنه Three.js لود شده باشه -->
+    <!-- کره زمین — فقط بعد از لود کامل صفحه و Three.js -->
     <script>
         window.addEventListener('load', function() {
             if (typeof THREE !== 'undefined') {
-                const script = document.createElement('script');
-                script.src = 'assets/js/earth-final.js';
-                script.onload = () => console.log('کره زمین با موفقیت لود شد');
-                script.onerror = () => console.error('خطا در لود earth-final.js');
-                document.body.appendChild(script);
-            } else {
-                console.error('Three.js لود نشده!');
+                const s = document.createElement('script');
+                s.src = 'assets/js/earth-final.js';
+                document.body.appendChild(s);
             }
         });
 
+        // پارتیکل‌های نئونی
         particlesJS("particles", {
             "particles": {
                 "number": { "value": 80 },
