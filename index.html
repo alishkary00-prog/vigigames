@@ -26,17 +26,17 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            font-size: 38px;
+            font-size: 32px;
             color: #ff0033;
-            text-shadow: 0 0 30px #ff0033;
-            animation: pulse 1.6s infinite;
+            text-shadow: 0 0 25px #ff0033;
+            animation: pulse 1.8s infinite;
             pointer-events: none;
             z-index: 20;
             transform: translate(-50%, -50%);
         }
         @keyframes pulse {
             0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
         }
         .widget-label {
             position: absolute;
@@ -44,9 +44,9 @@
             left: 50%;
             transform: translateX(-50%);
             color: #00ffff;
-            font: bold 12px 'Orbitron', sans-serif;
-            letter-spacing: 4px;
-            text-shadow: 0 0 20px #00ffff;
+            font: bold 11px 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #00ffff;
             pointer-events: none;
             text-transform: uppercase;
         }
@@ -94,10 +94,24 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-        particlesJS("particles", {"particles":{"number":{"value":80},"color":{"value":"#00ffff"},"opacity":{"value":0.3},"size":{"value":3},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.15},"move":{"enable":true,"speed":1.2}},"interactivity":{"events":{"onhover":{"enable":true,"mode":"repulse"}}},"retina_detect":true});
+        // پارتیکل‌ها
+        particlesJS("particles", {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#00ffff" },
+                "opacity": { "value": 0.3 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 },
+                "move": { "enable": true, "speed": 1.2 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            },
+            "retina_detect": true
+        });
     </script>
 
-    <!-- کره زمین با ژاپن دقیقاً وسط + نقطه قرمز روی توکیو -->
+    <!-- کره زمین با Canvas 2D — ژاپن وسط، نقطه روی توکیو، بدون ارور -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('earth-canvas');
@@ -109,21 +123,21 @@
             const centerY = canvas.height / 2;
             const radius = 120;
 
-            // موقعیت دقیق توکیو روی کره (ژاپن وسط کادر)
+            // موقعیت دقیق توکیو (ژاپن وسط کادر)
             const tokyoX = centerX;
             const tokyoY = centerY;
 
-            function draw() {
+            function drawEarth() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // گرادیان نئونی با چرخش آهسته
+                // گرادیان نئونی با چرخش
                 const time = Date.now() * 0.0003;
-                const gradX = centerX + Math.cos(time) * 30;
-                const gradY = centerY + Math.sin(time) * 20;
+                const gradX = centerX + Math.cos(time) * 25;
+                const gradY = centerY + Math.sin(time) * 15;
                 const gradient = ctx.createRadialGradient(gradX, gradY, 0, centerX, centerY, radius);
-                gradient.addColorStop(0, '#00ccff');
-                gradient.addColorStop(0.4, '#0066aa');
-                gradient.addColorStop(1, '#001122');
+                gradient.addColorStop(0, '#00ccff');  // مرکز نئونی
+                gradient.addColorStop(0.5, '#004488');  // وسط آبی
+                gradient.addColorStop(1, '#001122');  // لبه تیره
 
                 // کره زمین
                 ctx.fillStyle = gradient;
@@ -131,27 +145,33 @@
                 ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // حلقه نئونی دور کره (می‌چرخه)
+                // حلقه نئونی دور کره
                 ctx.strokeStyle = '#00ffff';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.arc(centerX, centerY, radius + 5, time, time + Math.PI * 2);
+                ctx.arc(centerX, centerY, radius + 3, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // نقطه قرمز پالس‌دار روی توکیو (دقیق وسط)
-                const pulse = 8 + Math.sin(Date.now() * 0.006) * 5;
+                // جزیره ژاپن (قرمز کوچک وسط)
+                ctx.fillStyle = '#cc4400';
+                ctx.beginPath();
+                ctx.ellipse(tokyoX, tokyoY, 15, 8, 0, 0, Math.PI * 2);  // شکل کشیده ژاپن
+                ctx.fill();
+
+                // نقطه قرمز پالس‌دار روی توکیو
+                const pulseSize = 6 + Math.sin(Date.now() * 0.006) * 3;
                 ctx.fillStyle = '#ff0033';
                 ctx.shadowColor = '#ff0033';
-                ctx.shadowBlur = 25;
+                ctx.shadowBlur = 20;
                 ctx.beginPath();
-                ctx.arc(tokyoX, tokyoY, pulse, 0, Math.PI * 2);
+                ctx.arc(tokyoX, tokyoY, pulseSize, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
 
             function animate() {
                 requestAnimationFrame(animate);
-                draw();
+                drawEarth();
             }
             animate();
         });
