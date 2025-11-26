@@ -6,16 +6,15 @@
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
 
-    <!-- فونت‌های سایبرپانک -->
+    <!-- فونت‌ها -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Three.js به صورت global (بدون importmap و بدون ارور) -->
-    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.160.0/examples/js/loaders/TextureLoader.js"></script>
-
     <!-- استایل اصلی -->
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- لود Three.js به صورت global (قبل از هر اسکریپتی) -->
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 
     <style>
         #earth-widget {
@@ -31,12 +30,8 @@
             z-index: 10;
             pointer-events: none;
         }
-        #earth-canvas { 
-            display: block; 
-            border-radius: 50%; 
-        }
+        #earth-canvas { display: block; border-radius: 50%; }
 
-        /* نقطه قرمز پالس‌دار روی ژاپن */
         .japan-pin {
             position: absolute;
             top: 39%;
@@ -70,18 +65,15 @@
 </head>
 <body>
 
-    <!-- ویجت کره زمین با نقطه قرمز هک -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="japan-pin">●</div>
         <div class="widget-label">BREACH ACTIVE</div>
     </div>
 
-    <!-- افکت‌های پس‌زمینه -->
     <canvas id="particles"></canvas>
     <div class="smoke"></div>
 
-    <!-- هدر اصلی -->
     <section class="hero">
         <div>
             <h1 class="glitch">VIGIGAMES</h1>
@@ -89,7 +81,6 @@
         </div>
     </section>
 
-    <!-- بخش پروژه‌ها -->
     <section class="projects">
         <h2>پروژه‌های من</h2>
         <div class="grid" id="projectsGrid">
@@ -100,24 +91,30 @@
         </div>
     </section>
 
-    <!-- بخش تبلیغات -->
     <section class="ads-section">
         <h2>حمایت شده توسط</h2>
         <div class="ads-grid" id="adsGrid"></div>
     </section>
 
-    <!-- فوتر -->
     <footer>
         © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
         <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
-    <!-- اسکریپت‌ها -->
+    <!-- اسکریپت‌ها (همه بعد از لود Three.js) -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="assets/js/earth-final.js"></script> <!-- بدون type="module" -->
     <script src="assets/js/main.js"></script>
 
-    <!-- پارتیکل‌های نئونی -->
+    <!-- اجرای کره زمین فقط بعد از لود کامل صفحه و Three.js -->
+    <script>
+        window.addEventListener('load', () => {
+            const script = document.createElement('script');
+            script.src = 'assets/js/earth-final.js';
+            document.body.appendChild(script);
+        });
+    </script>
+
+    <!-- پارتیکل‌ها -->
     <script>
         particlesJS("particles", {
             "particles": {
