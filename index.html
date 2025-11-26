@@ -6,78 +6,78 @@
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
 
+    <!-- فونت‌های سایبرپانک -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <!-- استایل اصلی -->
     <link rel="stylesheet" href="assets/css/style.css">
+
     <style>
-        /* کره ثابت با SVG (بدون JS — ۱۰۰٪ کارکردی) */
         #earth-widget {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            width: 260px;
-            height: 260px;
+            width: 280px;
+            height: 280px;
             border: 2px solid #00ffff44;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 40px #00ffff33;
+            box-shadow: 0 0 50px #00ffff33;
             z-index: 10;
-            background: #000;
+            pointer-events: none;
         }
-        #earth-svg {
-            width: 100%;
-            height: 100%;
-            display: block;
+        #earth-canvas { 
+            display: block; 
+            border-radius: 50%; 
         }
-        /* فلش قرمز ثابت روی ژاپن */
+
+        /* نقطه قرمز پالس‌دار روی ژاپن */
         .japan-pin {
             position: absolute;
             top: 39%;
-            left: 73%;
-            font-size: 18px;
+            left: 73.5%;
+            font-size: 32px;
             color: #ff0033;
-            text-shadow: 0 0 12px #ff0033;
-            animation: blink 2s infinite;
+            text-shadow: 0 0 25px #ff0033;
+            animation: pulse 1.8s infinite;
             pointer-events: none;
             z-index: 20;
             transform: translate(-50%, -50%);
         }
-        @keyframes blink {
-            0%,100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
         }
+
         .widget-label {
             position: absolute;
-            bottom: 12px;
+            bottom: 14px;
             left: 50%;
             transform: translateX(-50%);
             color: #00ffff;
-            font: bold 10px 'Orbitron';
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #00ffff;
+            font: bold 11px 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #00ffff;
+            pointer-events: none;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
 
-    <!-- کره ثابت با SVG + فلش روی ژاپن -->
+    <!-- ویجت کره زمین با نقطه قرمز هک -->
     <div id="earth-widget">
-        <svg id="earth-svg" viewBox="0 0 100 100">
-            <!-- کره زمین با قاره‌ها (ساده) -->
-            <circle cx="50" cy="50" r="48" fill="#1e3a8a" stroke="#00ffff" stroke-width="0.5" />
-            <!-- قاره آسیا (ژاپن وسط) -->
-            <path d="M25 40 Q30 35 35 40 Q40 45 45 40 Q50 38 55 42 Q60 45 65 40 Q70 35 75 40" fill="#4a5568" />
-            <!-- اقیانوس‌ها -->
-            <circle cx="50" cy="50" r="48" fill="none" stroke="#0c4a6e" stroke-width="2" opacity="0.3" />
-        </svg>
-        <div class="japan-pin">▼</div>
+        <canvas id="earth-canvas"></canvas>
+        <div class="japan-pin">●</div>
         <div class="widget-label">BREACH ACTIVE</div>
     </div>
 
+    <!-- افکت‌های پس‌زمینه -->
     <canvas id="particles"></canvas>
     <div class="smoke"></div>
 
+    <!-- هدر اصلی -->
     <section class="hero">
         <div>
             <h1 class="glitch">VIGIGAMES</h1>
@@ -85,6 +85,7 @@
         </div>
     </section>
 
+    <!-- بخش پروژه‌ها -->
     <section class="projects">
         <h2>پروژه‌های من</h2>
         <div class="grid" id="projectsGrid">
@@ -95,27 +96,39 @@
         </div>
     </section>
 
+    <!-- بخش تبلیغات -->
     <section class="ads-section">
         <h2>حمایت شده توسط</h2>
         <div class="ads-grid" id="adsGrid"></div>
     </section>
 
+    <!-- فوتر -->
     <footer>
         © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
         <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
+    <!-- اسکریپت‌ها -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script type="module" src="assets/js/earth-final.js"></script>
     <script src="assets/js/main.js"></script>
 
+    <!-- پارتیکل‌های نئونی -->
     <script>
         particlesJS("particles", {
-            "particles": { "number": { "value": 80 }, "color": { "value": "#00ffff" }, "opacity": { "value": 0.3 }, "size": { "value": 3 }, "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 }, "move": { "enable": true, "speed": 1.2 } },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } },
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#00ffff" },
+                "opacity": { "value": 0.3 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 },
+                "move": { "enable": true, "speed": 1.2 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            },
             "retina_detect": true
         });
     </script>
 </body>
 </html>
-
-
