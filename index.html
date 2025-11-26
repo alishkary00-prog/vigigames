@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
-    
-    <!-- رفع ارور favicon -->
     <link rel="icon" href="data:,">
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -26,73 +24,48 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            width: 280px;
-            height: 280px;
-            border: 2px solid #00ffff;
+            width: 260px;
+            height: 260px;
+            border: 2px solid #00ffff44;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 50px #00ffff, inset 0 0 40px rgba(0,255,255,0.2);
+            box-shadow: 0 0 40px #00ffff33ff33;
             z-index: 10;
-            background: radial-gradient(circle at 30% 30%, #001122, #000);
+            background: #000;
         }
         .scanlines-mini {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(transparent 50%, rgba(0,0,0,0.15) 50%);
+            background: linear-gradient(transparent 50%, rgba(0,0,0,0.12) 50%);
             background-size: 100% 4px;
             pointer-events: none;
             border-radius: 50%;
+            opacity: 0.6;
         }
-        .hack-pin {
+        .japan-arrow {
             position: absolute;
-            top: 38.5%;
-            left: 73%;
-            transform: translate(-50%, -50%);
+            top: 38.8%;
+            left: 73.5%;
+            font-size: 22px;
+            color: #ff0033;
+            text-shadow: 0 0 12px #ff0033, 0 0 25px #ff0033;
+            animation: blink 2.2s infinite;
             pointer-events: none;
             z-index: 30;
-        }
-        .pulse-ring {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border: 3px solid #ff0033;
-            border-radius: 50%;
-            left: 50%;
-            top: 50%;
             transform: translate(-50%, -50%);
-            animation: pulseRing 2s infinite;
         }
-        .pulse-ring.delay { animation-delay: 1s; }
-        .marker {
-            position: absolute;
-            color: #ff0033;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 10px;
-            letter-spacing: 1.5px;
-            white-space: nowrap;
-            top: -32px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-shadow: 0 0 20px #ff0033;
-            animation: glowText 2s infinite alternate;
-        }
-        @keyframes pulseRing {
-            0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
-            100% { transform: translate(-50%,-50%) scale(1.8); opacity: 0; }
-        }
-        @keyframes glowText {
-            from { text-shadow: 0 0 10px #ff0033; }
-            to { text-shadow: 0 0 30px #ff0033, 0 0 50px #ff0033; }
+        @keyframes blink {
+            0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
         }
         .widget-label {
             position: absolute;
-            bottom: 10px;
+            bottom: 12px;
             left: 50%;
             transform: translateX(-50%);
             color: #00ffff;
-            font-family: 'Orbitron';
-            font-size: 11px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
             letter-spacing: 2px;
             text-shadow: 0 0 10px #00ffff;
             pointer-events: none;
@@ -101,16 +74,12 @@
 </head>
 <body>
 
-    <!-- کره کوچک + پین هک روی ژاپن -->
+    <!-- کره ثابت + فلش دقیق روی ژاپن -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="scanlines-mini"></div>
-        <div class="hack-pin">
-            <div class="pulse-ring"></div>
-            <div class="pulse-ring delay"></div>
-            <div class="marker">TARGET LOCKED</div>
-        </div>
-        <div class="widget-label">GLOBAL DOMINATION ACTIVE</div>
+        <div class="japan-arrow">▼</div>
+        <div class="widget-label">SYSTEM BREACH ACTIVE</div>
     </div>
 
     <!-- بقیه سایت -->
@@ -128,7 +97,8 @@
         <h2>پروژه‌های من</h2>
         <div class="grid" id="projectsGrid">
             <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
-                به زودی...<br><span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
+                به زودی...<br>
+                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
             </div>
         </div>
     </section>
