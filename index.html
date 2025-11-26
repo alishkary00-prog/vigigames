@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
+    <title>VIGIGAMES</title>
     <link rel="icon" href="data:,">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
-
     <style>
-        #earth-widget{position:fixed;bottom:20px;left:20px;width:280px;height:280px;border:3px solid #00ffff;border-radius:50%;overflow:hidden;box-shadow:0 0 60px #00ffff;z-index:10;pointer-events:none}
-        #earth-canvas{width:100%!important;height:100%!important;border-radius:50%}
-        .japan-pin{position:absolute;top:39%;left:73.5%;font-size:35px;color:#ff0033;text-shadow:0 0 30px #ff0033;animation:p 1.6s infinite;pointer-events:none;z-index:20;transform:translate(-50%,-50%)}
-        @keyframes p{0%,100%{opacity:.7;transform:translate(-50%,-50%)scale(1)}50%{opacity:1;transform:translate(-50%,-50%)scale(1.5)}}
-        .widget-label{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:#00ffff;font:bold 13px 'Orbitron';letter-spacing:4px;text-shadow:0 0 20px #00ffff;pointer-events:none}
+        body{margin:0;background:#000;overflow:hidden;font-family:'Orbitron',sans-serif}
+        #earth-widget{position:fixed;bottom:20px;left:20px;width:280px;height:280px;border:3px solid #00ffff;border-radius:50%;overflow:hidden;box-shadow:0 0 70px #00ffff;z-index:999;pointer-events:none}
+        #earth-canvas{width:100%;height:100%;border-radius:50%}
+        .japan-pin{position:absolute;top:39%;left:73.5%;font-size:38px;color:#ff0033;text-shadow:0 0 30px #ff0033;animation:p 1.5s infinite;transform:translate(-50%,-50%)}
+        @keyframes p{0%,100%{opacity:.7;transform:translate(-50%,-50%)scale(1)}50%{opacity:1;transform:translate(-50%,-50%)scale(1.6)}}
+        .widget-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:#00ffff;font:bold 14px 'Orbitron';letter-spacing:5px;text-shadow:0 0 20px #00ffff}
     </style>
 </head>
 <body>
@@ -36,79 +35,73 @@
         </div>
     </section>
 
-    <section class="projects">
-        <h2>پروژه‌های من</h2>
-        <div class="grid" id="projectsGrid">
-            <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
-                به زودی...<br><span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
-            </div>
-        </div>
-    </section>
-
+    <!-- بقیه بخش‌ها مثل قبل -->
+    <section class="projects"><h2>پروژه‌های من</h2><div class="grid" id="projectsGrid"><div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem">به زودی...<br><span style="font-size:1.1rem;color:#00ffff88">در سایه‌ها منتظر باش</span></div></div></section>
     <section class="ads-section"><h2>حمایت شده توسط</h2><div class="ads-grid" id="adsGrid"></div></section>
-
     <footer>© ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br><a href="admin.html" class="admin-link">ورود به پنل مدیریت</a></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- کره زمین + نقطه قرمز + BREACH ACTIVE — 100٪ تضمینی -->
+    <!-- فقط Three.js + کره زمین (همه چیز داخل همین اسکریپت) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        // صبر می‌کنیم تا صفحه و Three.js کامل لود بشن
+        window.addEventListener('load', () => {
             setTimeout(() => {
                 const canvas = document.getElementById('earth-canvas');
-                if (!canvas || !window.THREE) return;
+                if (!canvas) return;
 
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+                const scene    = new THREE.Scene();
+                const camera   = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
                 camera.position.z = 3.8;
 
-                const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+                const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true});
                 renderer.setSize(280, 280);
                 renderer.setClearColor(0x000000, 0);
 
                 // نور قوی
-                scene.add(new THREE.AmbientLight(0xffffff, 4));
-                const dirLight = new THREE.DirectionalLight(0x00ffff, 6);
-                dirLight.position.set(5, 3, 5);
-                scene.add(dirLight);
+                scene.add(new THREE.AmbientLight(0xffffff, 5));
+                const light = new THREE.DirectionalLight(0x00ffff, 8);
+                light.position.set(5,5,5);
+                scene.add(light);
 
-                // کره زمین (آبی نئونی خفن)
+                // کره زمین آبی نئونی (بدون هیچ تکسچری)
                 const earth = new THREE.Mesh(
-                    new THREE.SphereGeometry(1, 80, 80),
+                    new THREE.SphereGeometry(1, 96, 96),
                     new THREE.MeshPhongMaterial({
-                        color: 0x001133,
-                        emissive: 0x00ffff,
-                        emissiveIntensity: 0.8,
-                        specular: 0x00ffff,
-                        shininess: 100
+                        color:       0x001122,
+                        emissive:    0x00aaff,
+                        emissiveIntensity: 1,
+                        specular:    0x00ffff,
+                        shininess:   100
                     })
                 );
                 scene.add(earth);
 
-                // نقطه قرمز پالس‌دار روی ژاپن
+                // نقطه قرمز بزرگ و پالس‌دار
                 const dot = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.06, 32, 32),
-                    new THREE.MeshBasicMaterial({ color: 0xff0033 })
+                    new THREE.SphereGeometry(0.07, 32, 32),
+                    new THREE.MeshBasicMaterial({color: 0xff0044})
                 );
                 dot.position.set(1.08, 0.4, 0.25);
                 earth.add(dot);
 
-                // انیمیشن پالس
-                function animate() {
+                // انیمیشن
+                const animate = () => {
                     requestAnimationFrame(animate);
-                    const scale = 1 + Math.abs(Math.sin(Date.now() * 0.006)) * 0.6;
-                    dot.scale.setScalar(scale);
-                    earth.rotation.y += 0.001;
+                    const s = 1 + Math.abs(Math.sin(Date.now()*0.005))*0.7;
+                    dot.scale.set(s,s,s);
+                    earth.rotation.y += 0.002;
                     renderer.render(scene, camera);
-                }
+                };
                 animate();
 
-            }, 500);
+            }, 800); // ۸۰۰ میلی‌ثانیه تاخیر برای اطمینان از لود کامل
         });
 
         // پارتیکل‌ها
-        particlesJS("particles", {"particles":{"number":{"value":80},"color":{"value":"#00ffff"},"opacity":{"value":0.3},"size":{"value":3},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.15},"move":{"enable":true,"speed":1.2}},"interactivity":{"events":{"onhover":{"enable":true,"mode":"repulse"}}},"retina_detect":true});
+        particlesJS("particles", {"particles":{"number":{"value":90},"color":{"value":"#00ffff"},"opacity":{"value":0.4},"size":{"value":3.5},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.2},"move":{"enable":true,"speed":1.5}},"interactivity":{"events":{"onhover":{"enable":true,"mode":"repulse"}}},"retina_detect":true});
     </script>
 </body>
 </html>
