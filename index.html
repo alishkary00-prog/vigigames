@@ -10,6 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <!-- Three.js به صورت global (بدون importmap و بدون ارور) -->
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.160.0/examples/js/loaders/TextureLoader.js"></script>
+
     <!-- استایل اصلی -->
     <link rel="stylesheet" href="assets/css/style.css">
 
@@ -110,7 +114,7 @@
 
     <!-- اسکریپت‌ها -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script type="module" src="assets/js/earth-final.js"></script>
+    <script src="assets/js/earth-final.js"></script> <!-- بدون type="module" -->
     <script src="assets/js/main.js"></script>
 
     <!-- پارتیکل‌های نئونی -->
