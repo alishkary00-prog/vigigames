@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <!-- Three.js از unpkg — همیشه کار می‌کنه -->
+    <!-- Three.js از unpkg — پایدارتر و همیشه لود می‌شه -->
     <script src="https://unpkg.com/three@0.169.0/build/three.min.js"></script>
 
     <style>
@@ -24,7 +24,7 @@
             box-shadow: 0 0 50px #00ffff33;
             z-index: 10;
             pointer-events: none;
-            background: #000011; /* fallback برای canvas */
+            background: #000011; /* fallback */
         }
         #earth-canvas { display: block; border-radius: 50%; width: 100%; height: 100%; }
         .japan-pin {
@@ -116,20 +116,21 @@
         });
     </script>
 
-    <!-- کره زمین — با retry و تنظیمات دقیق -->
+    <!-- کره زمین — با retry کامل و fallback -->
     <script>
         let retryCount = 0;
+        const maxRetries = 15;
         function initEarth() {
             retryCount++;
-            if (retryCount > 10) {
-                console.log('Three.js لود نشد، fallback به canvas ساده');
+            if (retryCount > maxRetries) {
+                console.log('Three.js لود نشد، fallback 2D');
                 fallbackEarth();
                 return;
             }
 
             if (typeof THREE === 'undefined') {
-                console.log('Three.js لود نشده، retry...');
-                setTimeout(initEarth, 300);
+                console.log('Three.js لود نشده، retry ' + retryCount);
+                setTimeout(initEarth, 200);
                 return;
             }
 
@@ -138,7 +139,7 @@
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-            camera.position.z = 2.5;  // تنظیم برای وسط قاب (ژاپن)
+            camera.position.z = 2.5;  // برای وسط قاب (ژاپن)
 
             const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
             renderer.setSize(280, 280);
@@ -166,7 +167,7 @@
             const dotGeometry = new THREE.SphereGeometry(0.05, 32, 32);
             const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0033 });
             const dot = new THREE.Mesh(dotGeometry, dotMaterial);
-            dot.position.set(0.95, 0.35, 0.3);  // موقعیت دقیق برای ژاپن
+            dot.position.set(0.95, 0.35, 0.3);  // موقعیت دقیق ژاپن
             earth.add(dot);
 
             // انیمیشن
@@ -179,24 +180,46 @@
             }
             animate();
 
-            console.log('کره زمین لود شد!');  // برای چک
+            console.log('کره زمین لود شد!');  // چک موفقیت
         }
 
-        // fallback ساده اگر Three.js لود نشد
+        // fallback 2D اگر Three.js فِیل کرد
         function fallbackEarth() {
             const canvas = document.getElementById('earth-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             canvas.width = 280;
             canvas.height = 280;
-            ctx.fillStyle = '#004488';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // کره آبی
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 120;
+            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+            gradient.addColorStop(0, '#0066aa');
+            gradient.addColorStop(1, '#001122');
+            ctx.fillStyle = gradient;
             ctx.beginPath();
-            ctx.arc(140, 140, 120, 0, 2 * Math.PI);
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
             ctx.fill();
+            // نقطه قرمز
             ctx.fillStyle = '#ff0033';
             ctx.beginPath();
-            ctx.arc(205, 110, 8, 0, 2 * Math.PI);  // نقطه ثابت
+            ctx.arc(centerX + 65, centerY - 30, 6, 0, 2 * Math.PI);  // موقعیت ژاپن
             ctx.fill();
+            // پالس ساده
+            setInterval(() => {
+                const pulseSize = 6 + Math.sin(Date.now() * 0.005) * 3;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = '#ff0033';
+                ctx.beginPath();
+                ctx.arc(centerX + 65, centerY - 30, pulseSize, 0, 2 * Math.PI);
+                ctx.fill();
+            }, 50);
         }
 
         // شروع
