@@ -111,7 +111,7 @@
         });
     </script>
 
-    <!-- کره زمین با Canvas 2D — ژاپن وسط، نقطه روی توکیو، بدون ارور -->
+    <!-- کره زمین با Canvas 2D — ژاپن کامل وسط، جزیره قرمز، نقطه پالس‌دار -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('earth-canvas');
@@ -123,9 +123,9 @@
             const centerY = canvas.height / 2;
             const radius = 120;
 
-            // موقعیت دقیق توکیو (ژاپن وسط کادر)
-            const tokyoX = centerX;
-            const tokyoY = centerY;
+            // موقعیت دقیق ژاپن (وسط کادر)
+            const japanX = centerX;
+            const japanY = centerY;
 
             function drawEarth() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -152,19 +152,19 @@
                 ctx.arc(centerX, centerY, radius + 3, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // جزیره ژاپن (قرمز کوچک وسط)
+                // جزیره ژاپن (قرمز کشیده وسط کادر)
                 ctx.fillStyle = '#cc4400';
                 ctx.beginPath();
-                ctx.ellipse(tokyoX, tokyoY, 15, 8, 0, 0, Math.PI * 2);  // شکل کشیده ژاپن
+                ctx.ellipse(japanX, japanY, 20, 10, 0, 0, Math.PI * 2);  // شکل ژاپن (کشیده افقی)
                 ctx.fill();
 
-                // نقطه قرمز پالس‌دار روی توکیو
+                // نقطه قرمز پالس‌دار روی توکیو (مرکز جزیره)
                 const pulseSize = 6 + Math.sin(Date.now() * 0.006) * 3;
                 ctx.fillStyle = '#ff0033';
                 ctx.shadowColor = '#ff0033';
                 ctx.shadowBlur = 20;
                 ctx.beginPath();
-                ctx.arc(tokyoX, tokyoY, pulseSize, 0, Math.PI * 2);
+                ctx.arc(japanX, japanY, pulseSize, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.shadowBlur = 0;
             }
