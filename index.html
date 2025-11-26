@@ -24,19 +24,19 @@
         #earth-canvas { display: block; border-radius: 50%; width: 100%; height: 100%; }
         .japan-pin {
             position: absolute;
-            top: 39%;
-            left: 73.5%;
-            font-size: 32px;
+            top: 50%;
+            left: 50%;
+            font-size: 38px;
             color: #ff0033;
-            text-shadow: 0 0 25px #ff0033;
-            animation: pulse 1.8s infinite;
+            text-shadow: 0 0 30px #ff0033;
+            animation: pulse 1.6s infinite;
             pointer-events: none;
             z-index: 20;
             transform: translate(-50%, -50%);
         }
         @keyframes pulse {
             0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
         }
         .widget-label {
             position: absolute;
@@ -44,9 +44,9 @@
             left: 50%;
             transform: translateX(-50%);
             color: #00ffff;
-            font: bold 11px 'Orbitron', sans-serif;
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px #00ffff;
+            font: bold 12px 'Orbitron', sans-serif;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px #00ffff;
             pointer-events: none;
             text-transform: uppercase;
         }
@@ -94,90 +94,64 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-        // پارتیکل‌ها
-        particlesJS("particles", {
-            "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#00ffff" },
-                "opacity": { "value": 0.3 },
-                "size": { "value": 3 },
-                "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 },
-                "move": { "enable": true, "speed": 1.2 }
-            },
-            "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "repulse" } }
-            },
-            "retina_detect": true
-        });
+        particlesJS("particles", {"particles":{"number":{"value":80},"color":{"value":"#00ffff"},"opacity":{"value":0.3},"size":{"value":3},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.15},"move":{"enable":true,"speed":1.2}},"interactivity":{"events":{"onhover":{"enable":true,"mode":"repulse"}}},"retina_detect":true});
     </script>
 
-    <!-- کره زمین با Canvas 2D — 100% آفلاین، بدون ارور، ژاپن وسط -->
+    <!-- کره زمین با ژاپن دقیقاً وسط + نقطه قرمز روی توکیو -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('earth-canvas');
-            if (!canvas) return;
-
             const ctx = canvas.getContext('2d');
             canvas.width = 280;
             canvas.height = 280;
+
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = 120;
 
-            // گرادیان برای کره زمین (آبی نئونی، شبیه سه‌بعدی)
-            function getGradient() {
-                const gradient = ctx.createRadialGradient(centerX - 20, centerY - 20, 0, centerX, centerY, radius);
-                gradient.addColorStop(0, '#00aaff');  // مرکز روشن نئونی
-                gradient.addColorStop(0.5, '#004488');  // وسط آبی
-                gradient.addColorStop(1, '#001122');  // لبه تیره
-                return gradient;
-            }
+            // موقعیت دقیق توکیو روی کره (ژاپن وسط کادر)
+            const tokyoX = centerX;
+            const tokyoY = centerY;
 
-            // موقعیت ژاپن (دقیق وسط قاب)
-            const japanX = centerX + 65;
-            const japanY = centerY - 30;
-
-            function drawEarth() {
+            function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+                // گرادیان نئونی با چرخش آهسته
+                const time = Date.now() * 0.0003;
+                const gradX = centerX + Math.cos(time) * 30;
+                const gradY = centerY + Math.sin(time) * 20;
+                const gradient = ctx.createRadialGradient(gradX, gradY, 0, centerX, centerY, radius);
+                gradient.addColorStop(0, '#00ccff');
+                gradient.addColorStop(0.4, '#0066aa');
+                gradient.addColorStop(1, '#001122');
+
                 // کره زمین
-                ctx.fillStyle = getGradient();
+                ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // نئون دور کره (حلقه)
+                // حلقه نئونی دور کره (می‌چرخه)
                 ctx.strokeStyle = '#00ffff';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 3;
                 ctx.beginPath();
-                ctx.arc(centerX, centerY, radius + 2, 0, 2 * Math.PI);
+                ctx.arc(centerX, centerY, radius + 5, time, time + Math.PI * 2);
                 ctx.stroke();
 
-                // نقطه قرمز پالس‌دار روی ژاپن
-                const pulseSize = 8 + Math.sin(Date.now() * 0.005) * 4;  // پالس
+                // نقطه قرمز پالس‌دار روی توکیو (دقیق وسط)
+                const pulse = 8 + Math.sin(Date.now() * 0.006) * 5;
                 ctx.fillStyle = '#ff0033';
-                ctx.beginPath();
-                ctx.arc(japanX, japanY, pulseSize, 0, 2 * Math.PI);
-                ctx.fill();
-
-                // سایه نئون برای نقطه
                 ctx.shadowColor = '#ff0033';
-                ctx.shadowBlur = 15;
+                ctx.shadowBlur = 25;
+                ctx.beginPath();
+                ctx.arc(tokyoX, tokyoY, pulse, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.shadowBlur = 0;  // ریست
-
-                // چرخش آروم (تغییر گرادیان)
-                const rotation = Date.now() * 0.0005;
-                const rotatedGradient = ctx.createRadialGradient(centerX - Math.cos(rotation) * 20, centerY - Math.sin(rotation) * 20, 0, centerX, centerY, radius);
-                rotatedGradient.addColorStop(0, '#00aaff');
-                rotatedGradient.addColorStop(0.5, '#004488');
-                rotatedGradient.addColorStop(1, '#001122');
+                ctx.shadowBlur = 0;
             }
 
-            // انیمیشن
             function animate() {
                 requestAnimationFrame(animate);
-                drawEarth();
+                draw();
             }
             animate();
         });
