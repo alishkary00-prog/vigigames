@@ -6,14 +6,13 @@
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
 
-    <!-- فونت‌های سایبرپانک -->
+    <!-- فونت‌ها -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Three.js جدیدترین نسخه بدون warning -->
+    <!-- Three.js از jsDelivr — جدیدترین نسخه بدون هیچ warning -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/loaders/TextureLoader.js"></script>
 
-    <!-- استایل اصلی -->
     <link rel="stylesheet" href="assets/css/style.css">
 
     <style>
@@ -65,18 +64,15 @@
 </head>
 <body>
 
-    <!-- ویجت کره زمین با نقطه قرمز روی ژاپن -->
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="japan-pin">●</div>
         <div class="widget-label">BREACH ACTIVE</div>
     </div>
 
-    <!-- پس‌زمینه -->
     <canvas id="particles"></canvas>
     <div class="smoke"></div>
 
-    <!-- هدر -->
     <section class="hero">
         <div>
             <h1 class="glitch">VIGIGAMES</h1>
@@ -84,7 +80,6 @@
         </div>
     </section>
 
-    <!-- پروژه‌ها -->
     <section class="projects">
         <h2>پروژه‌های من</h2>
         <div class="grid" id="projectsGrid">
@@ -95,13 +90,11 @@
         </div>
     </section>
 
-    <!-- تبلیغات -->
     <section class="ads-section">
         <h2>حمایت شده توسط</h2>
         <div class="ads-grid" id="adsGrid"></div>
     </section>
 
-    <!-- فوتر -->
     <footer>
         © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
         <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
@@ -111,12 +104,12 @@
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- کره زمین (فقط بعد از لود کامل صفحه) -->
+    <!-- کره زمین — فقط بعد از لود کامل -->
     <script>
-        window.addEventListener('load', () => {
-            const script = document.createElement('script');
-            script.src = 'assets/js/earth-final.js';
-            document.body.appendChild(script);
+        window.addEventListener('load', function() {
+            const s = document.createElement('script');
+            s.src = 'assets/js/earth-final.js';
+            document.body.appendChild(s);
         });
     </script>
 
