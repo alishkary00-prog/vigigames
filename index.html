@@ -3,22 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIGIGAMES</title>
+    <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-
+    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
     <style>
-        body{margin:0;background:#000;overflow:hidden;font-family:'Orbitron',sans-serif}
-        #earth-widget{position:fixed;bottom:20px;left:20px;width:280px;height:280px;border:3px solid #00ffff;border-radius:50%;overflow:hidden;box-shadow:0 0 70px #00ffff;z-index:999;pointer-events:none}
-        #earth-canvas{width:100%;height:100%;border-radius:50%}
-        .japan-pin{position:absolute;top:39%;left:73.5%;font-size:38px;color:#ff0033;text-shadow:0 0 30px #ff0033;animation:p 1.5s infinite;transform:translate(-50%,-50%)}
-        @keyframes p{0%,100%{opacity:.7;transform:translate(-50%,-50%)scale(1)}50%{opacity:1;transform:translate(-50%,-50%)scale(1.6)}}
-        .widget-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:#00ffff;font:bold 14px 'Orbitron';letter-spacing:5px;text-shadow:0 0 20px #00ffff}
+        #earth-widget {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            height: 280px;
+            border: 2px solid #00ffff44;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 50px #00ffff33;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #earth-canvas { display: block; border-radius: 50%; background: #000; }
+        .japan-pin {
+            position: absolute;
+            top: 39%;
+            left: 73.5%;
+            font-size: 32px;
+            color: #ff0033;
+            text-shadow: 0 0 25px #ff0033;
+            animation: pulse 1.8s infinite;
+            pointer-events: none;
+            z-index: 20;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
+        }
+        .widget-label {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ffff;
+            font: bold 11px 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #00ffff;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
-
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
         <div class="japan-pin">●</div>
@@ -35,73 +70,95 @@
         </div>
     </section>
 
-    <!-- بقیه بخش‌ها مثل قبل -->
-    <section class="projects"><h2>پروژه‌های من</h2><div class="grid" id="projectsGrid"><div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem">به زودی...<br><span style="font-size:1.1rem;color:#00ffff88">در سایه‌ها منتظر باش</span></div></div></section>
-    <section class="ads-section"><h2>حمایت شده توسط</h2><div class="ads-grid" id="adsGrid"></div></section>
-    <footer>© ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br><a href="admin.html" class="admin-link">ورود به پنل مدیریت</a></footer>
+    <section class="projects">
+        <h2>پروژه‌های من</h2>
+        <div class="grid" id="projectsGrid">
+            <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
+                به زودی...<br>
+                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="ads-section">
+        <h2>حمایت شده توسط</h2>
+        <div class="ads-grid" id="adsGrid"></div>
+    </section>
+
+    <footer>
+        © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
+        <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- فقط Three.js + کره زمین (همه چیز داخل همین اسکریپت) -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
     <script>
-        // صبر می‌کنیم تا صفحه و Three.js کامل لود بشن
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const canvas = document.getElementById('earth-canvas');
-                if (!canvas) return;
-
-                const scene    = new THREE.Scene();
-                const camera   = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-                camera.position.z = 3.8;
-
-                const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true});
-                renderer.setSize(280, 280);
-                renderer.setClearColor(0x000000, 0);
-
-                // نور قوی
-                scene.add(new THREE.AmbientLight(0xffffff, 5));
-                const light = new THREE.DirectionalLight(0x00ffff, 8);
-                light.position.set(5,5,5);
-                scene.add(light);
-
-                // کره زمین آبی نئونی (بدون هیچ تکسچری)
-                const earth = new THREE.Mesh(
-                    new THREE.SphereGeometry(1, 96, 96),
-                    new THREE.MeshPhongMaterial({
-                        color:       0x001122,
-                        emissive:    0x00aaff,
-                        emissiveIntensity: 1,
-                        specular:    0x00ffff,
-                        shininess:   100
-                    })
-                );
-                scene.add(earth);
-
-                // نقطه قرمز بزرگ و پالس‌دار
-                const dot = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.07, 32, 32),
-                    new THREE.MeshBasicMaterial({color: 0xff0044})
-                );
-                dot.position.set(1.08, 0.4, 0.25);
-                earth.add(dot);
-
-                // انیمیشن
-                const animate = () => {
-                    requestAnimationFrame(animate);
-                    const s = 1 + Math.abs(Math.sin(Date.now()*0.005))*0.7;
-                    dot.scale.set(s,s,s);
-                    earth.rotation.y += 0.002;
-                    renderer.render(scene, camera);
-                };
-                animate();
-
-            }, 800); // ۸۰۰ میلی‌ثانیه تاخیر برای اطمینان از لود کامل
+        // پارتیکل‌ها
+        particlesJS("particles", {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#00ffff" },
+                "opacity": { "value": 0.3 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 },
+                "move": { "enable": true, "speed": 1.2 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            },
+            "retina_detect": true
         });
 
-        // پارتیکل‌ها
-        particlesJS("particles", {"particles":{"number":{"value":90},"color":{"value":"#00ffff"},"opacity":{"value":0.4},"size":{"value":3.5},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.2},"move":{"enable":true,"speed":1.5}},"interactivity":{"events":{"onhover":{"enable":true,"mode":"repulse"}}},"retina_detect":true});
+        // کره زمین — تضمینی و بدون هیچ مشکلی
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('earth-canvas');
+            if (!canvas) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+            camera.position.z = 2.5;  // نزدیک‌تر برای رندر بهتر
+
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(280, 280);
+            renderer.setClearColor(0x000011, 1);  // پس‌زمینه تیره آبی به جای سیاه کامل
+
+            // نور
+            const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+
+            // کره زمین — آبی نئونی خفن
+            const geometry = new THREE.SphereGeometry(1, 32, 32);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x006994,
+                emissive: 0x001122,
+                emissiveIntensity: 0.5,
+                shininess: 100,
+                specular: 0x00ffff
+            });
+            const earth = new THREE.Mesh(geometry, material);
+            scene.add(earth);
+
+            // نقطه قرمز روی ژاپن
+            const dotGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+            const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0033 });
+            const dot = new THREE.Mesh(dotGeometry, dotMaterial);
+            dot.position.set(0.95, 0.35, 0.3);  // موقعیت دقیق ژاپن
+            earth.add(dot);
+
+            // انیمیشن پالس و چرخش آروم
+            function animate() {
+                requestAnimationFrame(animate);
+                const time = Date.now() * 0.001;
+                dot.scale.setScalar(1 + Math.sin(time * 5) * 0.5);  // پالس
+                earth.rotation.y += 0.002;  // چرخش آروم
+                renderer.render(scene, camera);
+            }
+            animate();
+        });
     </script>
 </body>
 </html>
