@@ -5,15 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
-
-    <!-- فونت سایبرپانک -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
-    <!-- Three.js - فقط همین یک خط (جدیدترین نسخه بدون مشکل) -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
-
-    <!-- استایل اصلی -->
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- فقط Three.js — بدون فایل اضافی -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"></script>
 
     <style>
         #earth-widget{position:fixed;bottom:20px;left:20px;width:280px;height:280px;border:2px solid #00ffff44;border-radius:50%;overflow:hidden;box-shadow:0 0 50px #00ffff33;z-index:10;pointer-events:none}
@@ -61,21 +57,18 @@
         <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
-    <!-- اسکریپت‌های اصلی -->
+    <!-- اسکریپت‌ها -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- اجرای کره زمین فقط بعد از لود کامل Three.js (بدون هیچ اروری) -->
+    <!-- فقط و فقط بعد از لود کامل صفحه و Three.js — بدون هیچ ارور -->
     <script>
-        window.addEventListener('load', () => {
-            if (window.THREE) {
-                const s = document.createElement('script');
-                s.src = 'assets/js/earth-final.js';
-                document.body.appendChild(s);
-            }
-        });
+        window.onload = function() {
+            const script = document.createElement('script');
+            script.src = 'assets/js/earth-final.js';
+            document.body.appendChild(script);
+        };
 
-        // پارتیکل‌های نئونی
         particlesJS("particles", {
             "particles": {"number":{"value":80},"color":{"value":"#00ffff"},"opacity":{"value":0.3},"size":{"value":3},"line_linked":{"enable":true,"color":"#00ffff","opacity":0.15},"move":{"enable":true,"speed":1.2}},
             "interactivity": {"events":{"onhover":{"enable":true,"mode":"repulse"}}},
