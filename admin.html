@@ -5,75 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>پنل مدیریت VIGIGAMES</title>
     <link rel="icon" href="data:,">
-    
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
     <link rel="stylesheet" href="assets/css/style.css">
-    
     <style>
-        /* تنظیمات عمومی */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #0d0d1a; 
-            overflow: auto;
-        }
-
-        /* استایل‌های مربوط به #loginScreen، #adminPanel، .btn-neon، و... */
-        /* این استایل‌ها باید از قبل در فایل style.css یا اینجا قرار داده شده باشند. */
-        #loginScreen {
-            display: flex; 
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 10px;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
-            border: 1px solid #00ffff44;
-        }
-
-        #adminPanel {
-            display: none; /* پیش فرض مخفی */
-            width: 90%;
-            max-width: 1000px;
-            padding: 30px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 10px;
-            box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
-            border: 1px solid #00ffff44;
-            position: relative;
-        }
-
-        .btn-neon {
-            background: #00ffff;
-            color: #000;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 20px #00ffff;
-            transition: all 0.3s;
-        }
-        
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff0033;
-            color: #fff;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        /* ... بقیه استایل‌ها (مانند فرم، input و ...) ... */
+        /* لطفاً کدهای استایل سفارشی پنل مدیریت را که قبلاً در پیام‌ها ارائه شد، اینجا قرار دهید. */
+        /* استایل‌های اصلی (#loginScreen, #adminPanel, body) */
     </style>
 </head>
 <body>
@@ -92,31 +29,15 @@
         <button class="logout-btn" onclick="logout()">خروج</button>
         <h2>مدیریت پروژه‌ها</h2>
         <form id="projectForm">
-            <label for="pName">نام پروژه:</label>
-            <input type="text" id="pName" required>
-            <label for="pDesc">توضیحات (اختیاری):</label>
-            <textarea id="pDesc"></textarea>
-            <label for="pImage">آدرس عکس (URL):</label>
-            <input type="url" id="pImage" placeholder="https://..." required>
-            <label for="pStatus">وضعیت:</label>
-            <select id="pStatus" required>
-                <option value="in-progress">در حال ساخت</option>
-                <option value="completed">تکمیل شده</option>
-                <option value="cancelled">لغو شده</option>
-            </select>
             <button type="submit" id="submitBtn" class="btn-neon" style="margin-top: 20px;">ثبت پروژه</button>
         </form>
-        
-        <div id="projectsList">
-            <h3>لیست پروژه‌های ثبت شده:</h3>
-        </div>
-        
+        <div id="projectsList"> <h3>لیست پروژه‌های ثبت شده:</h3> </div>
         <p style="text-align:center; margin-top: 40px; color:#555;">
              برای برگرداندن به صفحه اصلی: <a href="index.html" style="color:#00ffff;">بازگشت</a>
         </p>
     </div>
 
-    <script src="admin (1).js"></script>
+    <script src="admin.js"></script>
     
 </body>
 </html>
