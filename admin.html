@@ -7,12 +7,12 @@
     <link rel="icon" href="data:,">
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <link rel="stylesheet" href="assets/css/style.css">
+    
     <style>
-        /* تنظیمات اختصاصی برای صفحه مدیریت */
+        /* تنظیمات عمومی */
         body {
             display: flex;
             justify-content: center;
@@ -22,7 +22,8 @@
             overflow: auto;
         }
 
-        /* صفحه ورود */
+        /* استایل‌های مربوط به #loginScreen، #adminPanel، .btn-neon، و... */
+        /* این استایل‌ها باید از قبل در فایل style.css یا اینجا قرار داده شده باشند. */
         #loginScreen {
             display: flex; 
             flex-direction: column;
@@ -35,19 +36,19 @@
             border-radius: 10px;
             box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
             border: 1px solid #00ffff44;
-            animation: fadeIn 1s ease;
         }
 
-        #loginScreen h2 {
-            color: #00ffff;
-            margin-bottom: 30px;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 10px #00ffff;
+        #adminPanel {
+            display: none; /* پیش فرض مخفی */
+            width: 90%;
+            max-width: 1000px;
+            padding: 30px;
+            background: rgba(10, 15, 40, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
+            border: 1px solid #00ffff44;
+            position: relative;
         }
-
-        .input-group { position: relative; width: 100%; margin-bottom: 20px; }
-        #adminPass { /* استایل ورودی */ }
-        #togglePass { /* استایل دکمه نمایش/مخفی */ }
 
         .btn-neon {
             background: #00ffff;
@@ -61,21 +62,6 @@
             transition: all 0.3s;
         }
         
-        #errorMsg { color: #ff0033; margin-top: 15px; display: none; text-shadow: 0 0 10px #ff0033; }
-
-        /* پنل اصلی مدیریت */
-        #adminPanel {
-            display: none; /* پیش فرض مخفی */
-            width: 90%;
-            max-width: 1000px;
-            padding: 30px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 10px;
-            box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
-            border: 1px solid #00ffff44;
-            position: relative;
-        }
-        
         .logout-btn {
             position: absolute;
             top: 20px;
@@ -87,9 +73,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        
-        /* ... بقیه استایل‌های پنل مدیریت ... */
-
+        /* ... بقیه استایل‌ها (مانند فرم، input و ...) ... */
     </style>
 </head>
 <body>
@@ -107,24 +91,19 @@
     <div id="adminPanel">
         <button class="logout-btn" onclick="logout()">خروج</button>
         <h2>مدیریت پروژه‌ها</h2>
-
         <form id="projectForm">
             <label for="pName">نام پروژه:</label>
             <input type="text" id="pName" required>
-
             <label for="pDesc">توضیحات (اختیاری):</label>
             <textarea id="pDesc"></textarea>
-
             <label for="pImage">آدرس عکس (URL):</label>
             <input type="url" id="pImage" placeholder="https://..." required>
-            
             <label for="pStatus">وضعیت:</label>
             <select id="pStatus" required>
                 <option value="in-progress">در حال ساخت</option>
                 <option value="completed">تکمیل شده</option>
                 <option value="cancelled">لغو شده</option>
             </select>
-
             <button type="submit" id="submitBtn" class="btn-neon" style="margin-top: 20px;">ثبت پروژه</button>
         </form>
         
