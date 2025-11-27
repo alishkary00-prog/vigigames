@@ -7,6 +7,9 @@
     <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
         #earth-widget {
             position: fixed;
@@ -19,13 +22,14 @@
             overflow: hidden;
             box-shadow: 0 0 50px #00ffff33;
             z-index: 10;
-            pointer-events: none;
+            pointer-events: none; /* کلیک روی المان‌های زیرین ممکن باشد */
+            background: #000;
         }
         #earth-canvas { 
             display: block; 
-            border-radius: 50%; 
             width: 100%; 
             height: 100%; 
+            outline: none;
         }
         .widget-label {
             position: absolute;
@@ -38,6 +42,7 @@
             text-shadow: 0 0 15px #00ffff;
             pointer-events: none;
             text-transform: uppercase;
+            z-index: 20;
         }
     </style>
 </head>
@@ -45,7 +50,7 @@
 
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
-        <div class="widget-label">BREACH ACTIVE</div>
+        <div class="widget-label">TARGET: TOKYO</div>
     </div>
 
     <canvas id="particles"></canvas>
@@ -82,7 +87,7 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-        // تنظیمات پارتیکل‌ها (بدون تغییر)
+        // پارتیکل‌ها (بدون تغییر)
         particlesJS("particles", {
             "particles": {
                 "number": { "value": 80 },
@@ -102,103 +107,154 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('earth-canvas');
-            if (!canvas) return;
             
-            const ctx = canvas.getContext('2d');
-            // تنظیم اندازه داخلی کانواس برای کیفیت بالا
-            canvas.width = 280;
-            canvas.height = 280;
+            // تنظیمات اولیه صحنه
+            const scene = new THREE.Scene();
+            // دوربین با زاویه دید مناسب
+            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+            camera.position.z = 2.8; // فاصله دوربین
 
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = 120;
+            const renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                alpha: true, // پس زمینه شفاف
+                antialias: true // لبه‌های نرم
+            });
+            renderer.setSize(280, 280);
+            renderer.setPixelRatio(window.devicePixelRatio);
 
-            function drawEarth() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // ایجاد گروه برای چرخش کل کره
+            const earthGroup = new THREE.Group();
+            scene.add(earthGroup);
 
-                // 1. اقیانوس (گرادیان آبی نئونی)
-                const time = Date.now() * 0.0003;
-                // حرکت دادن هایلایت برای زنده بودن کره
-                const gradX = centerX + Math.cos(time) * 30;
-                const gradY = centerY + Math.sin(time) * 20;
-                
-                const gradient = ctx.createRadialGradient(gradX, gradY, 0, centerX, centerY, radius);
-                gradient.addColorStop(0, '#00ccff');   // مرکز روشن
-                gradient.addColorStop(0.4, '#004488'); // آبی متوسط
-                gradient.addColorStop(1, '#000510');   // لبه‌های تاریک
+            // 1. ساخت خود کره زمین
+            const geometry = new THREE.SphereGeometry(1, 64, 64);
+            const textureLoader = new THREE.TextureLoader();
+            
+            // لود کردن تکسچر واقعی زمین (نسخه تیره برای تم سایبرپانک)
+            // از تکسچر استاندارد Three.js استفاده می‌کنیم و رنگ آن را تغییر می‌دهیم
+            const earthMaterial = new THREE.MeshPhongMaterial({
+                map: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg'),
+                color: 0x4444ff, // فیلتر رنگ آبی نئونی روی تکسچر
+                emissive: 0x001133, // درخشش ذاتی تیره
+                specular: 0x111111,
+                shininess: 10
+            });
+            const earth = new THREE.Mesh(geometry, earthMaterial);
+            earthGroup.add(earth);
 
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-                ctx.fill();
+            // 2. اضافه کردن اتمسفر (هاله دور زمین)
+            const atmosphereGeo = new THREE.SphereGeometry(1.1, 64, 64);
+            const atmosphereMat = new THREE.MeshPhongMaterial({
+                color: 0x00ffff,
+                transparent: true,
+                opacity: 0.1,
+                side: THREE.BackSide // رندر شدن پشت کره برای ایجاد هاله
+            });
+            const atmosphere = new THREE.Mesh(atmosphereGeo, atmosphereMat);
+            scene.add(atmosphere);
 
-                // 2. خط نئونی دور کره
-                ctx.strokeStyle = '#00ffff';
-                ctx.lineWidth = 2;
-                ctx.shadowColor = '#00ffff';
-                ctx.shadowBlur = 10;
-                ctx.stroke();
-                ctx.shadowBlur = 0; // ریست کردن سایه برای نقشه
+            // 3. نورپردازی
+            const ambientLight = new THREE.AmbientLight(0x333333);
+            scene.add(ambientLight);
 
-                // 3. رسم نقشه ژاپن (شبیه‌سازی با منحنی‌های دقیق)
-                // رنگ جزیره: کمی تیره‌تر از آب برای کنتراست
-                ctx.fillStyle = '#0a0a20'; 
-                
-                ctx.save();
-                // تنظیم موقعیت نقشه در وسط کره
-                ctx.translate(centerX - 10, centerY - 20); 
-                ctx.rotate(0.2); // کمی چرخش برای طبیعی شدن زاویه نقشه ژاپن
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(5, 3, 5);
+            scene.add(directionalLight);
 
-                ctx.beginPath();
-                // هونشو (جزیره اصلی - منحنی کمانی)
-                ctx.moveTo(0, -40);
-                ctx.bezierCurveTo(20, -30, 40, 0, 10, 50); 
-                ctx.bezierCurveTo(-10, 40, -20, 0, 0, -40);
-                
-                // هوکایدو (جزیره شمالی)
-                ctx.moveTo(25, -55);
-                ctx.arc(25, -55, 10, 0, Math.PI*2);
+            // نور آبی نقطه ای برای حس سایبرپانک
+            const pointLight = new THREE.PointLight(0x00ffff, 0.5);
+            pointLight.position.set(-2, 1, 2);
+            scene.add(pointLight);
 
-                // کیوشو (جزیره جنوبی)
-                ctx.moveTo(-15, 65);
-                ctx.arc(-15, 65, 7, 0, Math.PI*2);
-                
-                ctx.fill();
-                ctx.restore();
+            // 4. ایجاد پین (فلش) قرمز روی ژاپن
+            const pinGroup = new THREE.Group();
+            earthGroup.add(pinGroup);
 
-                // 4. رسم فلش قرمز (▼) روی توکیو
-                // موقعیت حدودی توکیو روی این نقشه فرضی
-                const pinX = centerX + 10;
-                const pinY = centerY - 10;
-                
-                // افکت پالس (ضربان قلب)
-                const pulseScale = 1 + Math.sin(Date.now() * 0.008) * 0.2;
+            // ساخت شکل پین (یک مخروط معکوس)
+            const pinGeo = new THREE.ConeGeometry(0.04, 0.15, 16);
+            pinGeo.rotateX(Math.PI); // چرخش برای اینکه نوکش پایین باشد
+            pinGeo.translate(0, 0.075, 0); // تنظیم محور چرخش
+            
+            const pinMat = new THREE.MeshBasicMaterial({ 
+                color: 0xff0033
+            });
+            const pin = new THREE.Mesh(pinGeo, pinMat);
+            
+            // اضافه کردن یک حلقه نئونی زیر پین
+            const ringGeo = new THREE.RingGeometry(0.04, 0.06, 32);
+            const ringMat = new THREE.MeshBasicMaterial({ 
+                color: 0xff0033, 
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.8
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.lookAt(0, 0, 1); // رو به بالا
+            
+            pinGroup.add(pin);
+            pinGroup.add(ring);
 
-                ctx.save();
-                ctx.translate(pinX, pinY);
-                ctx.scale(pulseScale, pulseScale);
-                
-                // سایه قرمز برای درخشش
-                ctx.shadowColor = '#ff0033';
-                ctx.shadowBlur = 15;
-                ctx.fillStyle = '#ff0033';
+            // --- محاسبه ریاضی مختصات ژاپن ---
+            // مختصات توکیو: Lat 35.6° N, Lon 139.6° E
+            const lat = 35.6;
+            const lon = 139.6;
 
-                // رسم مثلث برعکس (Pin)
-                ctx.beginPath();
-                ctx.moveTo(-6, -10); // گوشه بالا چپ
-                ctx.lineTo(6, -10);  // گوشه بالا راست
-                ctx.lineTo(0, 2);    // نوک تیز پایین
-                ctx.closePath();
-                ctx.fill();
-                
-                ctx.restore();
-            }
+            // تبدیل مختصات جغرافیایی به بردار سه بعدی (Vector3) روی سطح کره
+            // فرمول تبدیل Spherical به Cartesian
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const r = 1.01; // کمی بالاتر از سطح کره
 
+            const x = -(r * Math.sin(phi) * Math.cos(theta));
+            const z = (r * Math.sin(phi) * Math.sin(theta));
+            const y = (r * Math.cos(phi));
+
+            // قرار دادن پین در مختصات محاسبه شده
+            pinGroup.position.set(x, y, z);
+            
+            // چرخش پین به سمت بیرون از مرکز کره
+            pinGroup.lookAt(0, 0, 0); 
+            // چون lookAt سمت منفی Z را نگاه می کند و ما میخواهیم عمود بر سطح باشد، اصلاح میکنیم:
+            // روش ساده‌تر: پین به طور پیش فرض در (0,0,0) است. ما آن را نمی چرخانیم، بلکه گروهش را جابجا کردیم.
+            // برای اینکه پین عمود بر سطح زمین بایستد:
+            const pinVector = new THREE.Vector3(x, y, z).normalize();
+            const quaternion = new THREE.Quaternion();
+            quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), pinVector);
+            pinGroup.setRotationFromQuaternion(quaternion);
+
+
+            // --- چرخش کره زمین برای رو به رو شدن با ژاپن ---
+            // ما میخواهیم مختصات (lon, lat) دقیقاً جلوی دوربین (Z مثبت) باشد.
+            // با آزمون و خطا برای Three.js Texture Offset:
+            // چرخش Y بر اساس Longitude و چرخش X بر اساس Latitude
+            
+            earthGroup.rotation.y = -lon * (Math.PI / 180) - (Math.PI / 2); // تنظیم دقیق برای اینکه توکیو وسط باشد
+            earthGroup.rotation.x = lat * (Math.PI / 180);
+
+            // انیمیشن
             function animate() {
                 requestAnimationFrame(animate);
-                drawEarth();
+
+                // چرخش بسیار آهسته کره برای زنده بودن (اختیاری - اگر می‌خواهید ثابت بماند این خط را حذف کنید)
+                // earthGroup.rotation.y += 0.0005;
+
+                // انیمیشن پالس (ضربان) پین قرمز
+                const scale = 1 + Math.sin(Date.now() * 0.008) * 0.3;
+                pin.scale.set(scale, scale, scale);
+                ring.scale.set(scale, scale, scale);
+                
+                // چرخش حلقه دور پین
+                ring.rotation.z += 0.02;
+
+                renderer.render(scene, camera);
             }
             animate();
+            
+            // هندل کردن تغییر سایز صفحه
+            window.addEventListener('resize', () => {
+                // چون ویجت سایز ثابت دارد نیاز خاصی نیست، اما برای اطمینان:
+                renderer.setSize(280, 280);
+            });
         });
     </script>
 </body>
