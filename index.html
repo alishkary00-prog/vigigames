@@ -22,7 +22,8 @@
             pointer-events: none;
         }
         #earth-canvas { display: block; border-radius: 50%; width: 100%; height: 100%; }
-        .japan-pin {
+        /* فلش روی نقشه توسط خود جاوا اسکریپت رسم می‌شود و این المان حذف شده */
+        /* .japan-pin {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -37,7 +38,7 @@
         @keyframes pulse {
             0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
             50% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
-        }
+        } */
         .widget-label {
             position: absolute;
             bottom: 14px;
@@ -56,7 +57,6 @@
 
     <div id="earth-widget">
         <canvas id="earth-canvas"></canvas>
-        <div class="japan-pin">●</div>
         <div class="widget-label">BREACH ACTIVE</div>
     </div>
 
@@ -111,7 +111,6 @@
         });
     </script>
 
-    <!-- کره زمین با Canvas 2D — ژاپن کامل وسط، جزیره قرمز، نقطه پالس‌دار -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('earth-canvas');
@@ -123,9 +122,33 @@
             const centerY = canvas.height / 2;
             const radius = 120;
 
-            // موقعیت دقیق ژاپن (وسط کادر)
-            const japanX = centerX;
-            const japanY = centerY;
+            // مختصات توکیو (مرکز نقشه)
+            const tokyoX = centerX;
+            const tokyoY = centerY;
+
+            // مختصات تقریبی ژاپن (مجموعه نقاط چندضلعی)
+            // این مختصات تقریبی است و نسبت به مرکز (توکیو) تنظیم شده‌اند.
+            const japanPath = [
+                { x: tokyoX - 10, y: tokyoY - 50 }, // شمال
+                { x: tokyoX + 10, y: tokyoY - 45 },
+                { x: tokyoX + 25, y: tokyoY - 15 },
+                { x: tokyoX + 20, y: tokyoY + 30 }, // جنوب شرق
+                { x: tokyoX - 5, y: tokyoY + 45 },
+                { x: tokyoX - 30, y: tokyoY + 30 }, // جنوب غرب
+                { x: tokyoX - 25, y: tokyoY - 20 }
+            ];
+
+            function drawPin(x, y, size, color, shadowColor, shadowBlur) {
+                // نقطه پالس‌دار
+                const pulseSize = size * (1 + Math.sin(Date.now() * 0.006) * 0.5);
+                ctx.fillStyle = color;
+                ctx.shadowColor = shadowColor;
+                ctx.shadowBlur = shadowBlur;
+                ctx.beginPath();
+                ctx.arc(x, y, pulseSize, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
 
             function drawEarth() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -152,21 +175,18 @@
                 ctx.arc(centerX, centerY, radius + 3, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // جزیره ژاپن (قرمز کشیده وسط کادر)
-                ctx.fillStyle = '#cc4400';
+                // رسم نقشه ژاپن (شکل چندضلعی)
+                ctx.fillStyle = '#cc4400'; // رنگ جزیره
                 ctx.beginPath();
-                ctx.ellipse(japanX, japanY, 20, 10, 0, 0, Math.PI * 2);  // شکل ژاپن (کشیده افقی)
+                ctx.moveTo(japanPath[0].x, japanPath[0].y);
+                for (let i = 1; i < japanPath.length; i++) {
+                    ctx.lineTo(japanPath[i].x, japanPath[i].y);
+                }
+                ctx.closePath();
                 ctx.fill();
 
-                // نقطه قرمز پالس‌دار روی توکیو (مرکز جزیره)
-                const pulseSize = 6 + Math.sin(Date.now() * 0.006) * 3;
-                ctx.fillStyle = '#ff0033';
-                ctx.shadowColor = '#ff0033';
-                ctx.shadowBlur = 20;
-                ctx.beginPath();
-                ctx.arc(japanX, japanY, pulseSize, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                // رسم فلش (Pin) پالس‌دار روی توکیو (مرکز نقشه)
+                drawPin(tokyoX, tokyoY, 4, '#ff0033', '#ff0033', 15);
             }
 
             function animate() {
