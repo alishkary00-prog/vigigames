@@ -3,250 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت VIGIGAMES - ورود ممنوع</title>
+    <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
     <link rel="icon" href="data:,">
-    
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
     <link rel="stylesheet" href="assets/css/style.css">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
-        /* تنظیمات اختصاصی برای صفحه مدیریت */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #0d0d1a; /* پس‌زمینه تیره */
-            overflow: auto;
+        #earth-widget {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            height: 280px;
+            border: 2px solid #00ffff44;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 50px #00ffff33;
+            z-index: 10;
+            pointer-events: none;
+            background: #000;
         }
-
-        /* صفحه ورود */
-        #loginScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 10px;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
-            border: 1px solid #00ffff44;
-            animation: fadeIn 1s ease;
-        }
-
-        #loginScreen h2 {
-            color: #00ffff;
-            margin-bottom: 30px;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 10px #00ffff;
-        }
-
-        .input-group {
-            position: relative;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #adminPass {
-            width: 100%;
-            padding: 12px 50px 12px 15px;
-            border: 1px solid #00ffff66;
-            border-radius: 5px;
-            background: #0d0d1a;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-            transition: all 0.3s;
-        }
-
-        #togglePass {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #00ffff;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-        #togglePass:hover { color: #fff; }
-
-        .btn-neon {
-            background: #00ffff;
-            color: #000;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            box-shadow: 0 0 20px #00ffff;
-            transition: all 0.3s;
-        }
-        .btn-neon:hover {
-            box-shadow: 0 0 35px #00ffff;
-        }
-
-        #errorMsg {
-            color: #ff0033;
-            margin-top: 15px;
-            display: none;
-            text-shadow: 0 0 10px #ff0033;
-        }
-
-        /* پنل اصلی مدیریت */
-        #adminPanel {
-            display: none; /* در ابتدا پنهان است */
-            width: 90%;
-            max-width: 1000px;
-            padding: 30px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 10px;
-            box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
-            border: 1px solid #00ffff44;
-            animation: fadeIn 1s ease;
-        }
-
-        #adminPanel h2 {
-            color: #00ffff;
-            border-bottom: 2px solid #00ffff66;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 10px #00ffff;
-        }
-
-        /* استایل فرم پروژه‌ها */
-        #projectForm label {
-            display: block;
-            color: #00ffff;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        #projectForm input, #projectForm textarea, #projectForm select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #00ffff44;
-            border-radius: 5px;
-            background: #1a1a2e;
-            color: #e0f0ff;
+        #earth-canvas { 
+            display: block; 
+            width: 100%; 
+            height: 100%; 
             outline: none;
         }
-
-        #projectForm textarea { resize: vertical; }
-
-        /* دکمه‌های عملیاتی */
-        .project-actions button {
-            margin-left: 10px;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .project-actions .edit { background: #ffaa00; color: #000; }
-        .project-actions .delete { background: #ff0033; color: #fff; }
-
-        /* لیست پروژه‌ها */
-        #projectsList {
-            margin-top: 30px;
-        }
-
-        #projectsList .item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px dashed #00ffff22;
-            transition: background 0.3s;
-        }
-        #projectsList .item:hover {
-            background: rgba(0, 255, 255, 0.05);
-        }
-
-        .item-info {
-            flex-grow: 1;
-        }
-
-        .item-info h4 {
-            color: #e0f0ff;
-        }
-
-        .logout-btn {
+        .widget-label {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff0033;
-            color: #fff;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ffff;
+            font: bold 11px 'Orbitron', sans-serif;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #00ffff;
+            pointer-events: none;
+            text-transform: uppercase;
+            z-index: 20;
         }
     </style>
 </head>
 <body>
 
-    <div id="loginScreen">
-        <h2>ورود به پنل مدیریت</h2>
-        <div class="input-group">
-            <input type="password" id="adminPass" placeholder="رمز عبور" onkeypress="if(event.keyCode == 13) login()">
-            <button id="togglePass" onclick="togglePassword()">نمایش</button>
+    <div id="earth-widget">
+        <canvas id="earth-canvas"></canvas>
+        <div class="widget-label">TARGET: TOKYO</div>
+    </div>
+
+    <canvas id="particles"></canvas>
+    <div class="smoke"></div>
+
+    <section class="hero">
+        <div>
+            <h1 class="glitch">VIGIGAMES</h1>
+            <p class="subtitle">تاریکی فقط آغاز ماجراست...</p>
         </div>
-        <button class="btn-neon" onclick="login()">ورود</button>
-        <div id="errorMsg">رمز عبور اشتباه است!</div>
-    </div>
+    </section>
 
-    <div id="adminPanel">
-        <button class="logout-btn" onclick="logout()">خروج</button>
-        <h2>مدیریت پروژه‌ها</h2>
-
-        <form id="projectForm">
-            <label for="pName">نام پروژه:</label>
-            <input type="text" id="pName" required>
-
-            <label for="pDesc">توضیحات (اختیاری):</label>
-            <textarea id="pDesc"></textarea>
-
-            <label for="pImage">آدرس عکس (URL):</label>
-            <input type="url" id="pImage" placeholder="https://..." required>
-            
-            <label for="pStatus">وضعیت:</label>
-            <select id="pStatus" required>
-                <option value="in-progress">در حال ساخت</option>
-                <option value="completed">تکمیل شده</option>
-                <option value="cancelled">لغو شده</option>
-            </select>
-
-            <button type="submit" id="submitBtn" class="btn-neon" style="margin-top: 20px;">ثبت پروژه</button>
-        </form>
-        
-        <div id="projectsList">
-            <h3>لیست پروژه‌های ثبت شده:</h3>
+    <section class="projects">
+        <h2>پروژه‌های من</h2>
+        <div class="grid" id="projectsGrid">
+            <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
+                به زودی...<br>
+                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
             </div>
-        
-        <p style="text-align:center; margin-top: 40px; color:#555;">
-             برای برگرداندن به صفحه اصلی: <a href="index.html" style="color:#00ffff;">بازگشت</a>
-        </p>
+        </div>
+    </section>
 
-    </div>
+    <section class="ads-section">
+        <h2>حمایت شده توسط</h2>
+        <div class="ads-grid" id="adsGrid"></div>
+    </section>
 
-    <script src="admin (1).js"></script>
-    
+    <footer>
+        © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
+        <a href="admin (1).html" class="admin-link">ورود به پنل مدیریت</a>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script>
+        particlesJS("particles", {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#00ffff" },
+                "opacity": { "value": 0.3 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 },
+                "move": { "enable": true, "speed": 1.2 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            },
+            "retina_detect": true
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('earth-canvas');
+            if (!canvas) return;
+            
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+            camera.position.z = 2.8; 
+
+            const renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                alpha: true, 
+                antialias: true 
+            });
+            renderer.setSize(280, 280);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0x000000, 0);
+
+            const earthGroup = new THREE.Group();
+            scene.add(earthGroup);
+
+            const TARGET_LAT = 35.6;
+            const TARGET_LON = 139.6;
+            const RADIUS = 1;
+
+            function latLonToVector3(lat, lon, radius) {
+                const phi = (90 - lat) * (Math.PI / 180);
+                const theta = (lon + 90) * (Math.PI / 180); 
+                
+                return new THREE.Vector3(
+                    radius * Math.sin(phi) * Math.cos(theta),
+                    radius * Math.cos(phi),
+                    radius * Math.sin(phi) * Math.sin(theta)
+                );
+            }
+
+            // --- 1. ساخت کره زمین (نئونی Wireframe) ---
+            const geometry = new THREE.SphereGeometry(RADIUS, 64, 64);
+            const earthMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00ffff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const earth = new THREE.Mesh(geometry, earthMaterial);
+            earthGroup.add(earth);
+
+            // --- 2. اضافه کردن افکت Grid Data ---
+            const pointsMaterial = new THREE.PointsMaterial({
+                color: 0x00ffff,
+                size: 0.015,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                opacity: 0.5
+            });
+            const points = new THREE.Points(geometry, pointsMaterial);
+            earthGroup.add(points);
+
+            // --- 3. نورپردازی ---
+            const ambientLight = new THREE.AmbientLight(0x00ffff, 0.5);
+            scene.add(ambientLight);
+
+            // --- 4. ایجاد پین (فلش) قرمز روی ژاپن ---
+            const pinPosition = latLonToVector3(TARGET_LAT, TARGET_LON, RADIUS + 0.01);
+            
+            const pinGeo = new THREE.ConeGeometry(0.06, 0.18, 32);
+            pinGeo.rotateX(Math.PI / 2);
+
+            const pinMat = new THREE.MeshBasicMaterial({ 
+                color: 0xff0033
+            });
+            const pin = new THREE.Mesh(pinGeo, pinMat);
+
+            pin.position.copy(pinPosition);
+            pin.lookAt(0, 0, 0);
+            pin.rotateZ(Math.PI);
+            
+            earthGroup.add(pin);
+
+            // --- 5. تنظیم چرخش اولیه برای رو به رو شدن با ژاپن ---
+            const lonOffset = 180 + TARGET_LON; 
+            const latOffset = TARGET_LAT;
+            
+            earthGroup.rotation.order = 'YXZ';
+            earthGroup.rotation.y = -lonOffset * (Math.PI / 180);
+            earthGroup.rotation.x = latOffset * (Math.PI / 180);
+
+            // --- 6. انیمیشن ---
+            function animate() {
+                requestAnimationFrame(animate);
+
+                earthGroup.rotation.y += 0.0008; 
+
+                const scale = 1 + Math.sin(Date.now() * 0.006) * 0.25;
+                pin.scale.set(scale, scale, scale);
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+        });
+    </script>
 </body>
 </html>
