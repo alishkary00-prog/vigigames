@@ -1,12 +1,15 @@
-// admin.js — آخرین نسخه برای VIGIGAMES Dark Theme
+// admin.js — نسخه نهایی با حفاظت کامل DOM
 const PASSWORD = "13822";
 let projects = [];
 let editingId = null;
 
-// توابع کمکی (باید در Scope جهانی باشند تا onclick کار کند)
+// توابع کمکی (برای دسترسی جهانی توسط onclick)
 function togglePassword() {
     const input = document.getElementById("adminPass");
     const btn = document.getElementById("togglePass");
+    // حفاظت: اگر یکی از المان‌ها نباشد، کار نکند
+    if (!input || !btn) return; 
+
     if (input.type === "password") {
         input.type = "text";
         btn.textContent = "مخفی";
@@ -18,11 +21,12 @@ function togglePassword() {
 
 function renderList() {
     const list = document.getElementById("projectsList");
-    if (!list) return; // چک کردن برای اطمینان
-    
+    if (!list) return; // حفاظت
+
     list.innerHTML = "<h3>لیست پروژه‌های ثبت شده:</h3>";
     
     projects.forEach((p, i) => {
+        // ... (بقیه منطق renderList) ...
         const statusText = p.status === "completed" ? "تکمیل شده" :
                            p.status === "in-progress" ? "در حال ساخت" : "لغو شده";
         const item = document.createElement("div");
@@ -41,33 +45,51 @@ function renderList() {
 }
 
 function login() {
-    if (document.getElementById("adminPass").value === PASSWORD) {
-        // تغییر وضعیت نمایش
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-        
-        // ذخیره وضعیت ورود در حافظه مرورگر
+    const adminPass = document.getElementById("adminPass");
+    const loginScreen = document.getElementById("loginScreen");
+    const adminPanel = document.getElementById("adminPanel");
+    const errorMsg = document.getElementById("errorMsg");
+
+    // حفاظت: چک کردن موجودیت المان‌های حیاتی
+    if (!adminPass || !loginScreen || !adminPanel) {
+        console.error("المان‌های پنل مدیریت (loginScreen یا adminPanel) در HTML پیدا نشدند!");
+        return;
+    }
+
+    if (adminPass.value === PASSWORD) {
+        loginScreen.style.display = "none";
+        adminPanel.style.display = "block";
         localStorage.setItem("isLoggedIn", "true");
         renderList();
     } else {
-        document.getElementById("errorMsg").style.display = "block";
+        if (errorMsg) errorMsg.style.display = "block";
     }
 }
 
 function logout() {
-    // تغییر وضعیت نمایش
-    document.getElementById("adminPanel").style.display = "none";
-    document.getElementById("loginScreen").style.display = "flex";
+    const adminPanel = document.getElementById("adminPanel");
+    const loginScreen = document.getElementById("loginScreen");
+    const adminPass = document.getElementById("adminPass");
+    const errorMsg = document.getElementById("errorMsg");
     
-    // پاکسازی
-    document.getElementById("adminPass").value = "";
-    document.getElementById("errorMsg").style.display = "none";
+    // حفاظت
+    if (!adminPanel || !loginScreen) return;
+
+    adminPanel.style.display = "none";
+    loginScreen.style.display = "flex";
+    
+    if (adminPass) adminPass.value = "";
+    if (errorMsg) errorMsg.style.display = "none";
+    
     localStorage.removeItem("isLoggedIn");
 }
 
 function editProject(i) {
     editingId = i;
     const p = projects[i];
+    // حفاظت: چک کردن موجودیت المان‌های فرم
+    if (!document.getElementById("pName") || !document.getElementById("pDesc") || !document.getElementById("pImage") || !document.getElementById("pStatus") || !document.getElementById("submitBtn")) return;
+    
     document.getElementById("pName").value = p.name;
     document.getElementById("pDesc").value = p.desc;
     document.getElementById("pImage").value = p.image;
@@ -87,49 +109,57 @@ function deleteProject(i) {
 // ** تضمین اجرای کد پس از بارگذاری کامل DOM **
 document.addEventListener("DOMContentLoaded", function() {
     
-    // 1. بارگذاری پروژه‌ها از localStorage
+    // 1. بارگذاری پروژه‌ها
     const saved = localStorage.getItem("vigigames_projects");
     if (saved) {
         try { projects = JSON.parse(saved); }
         catch(e) { projects = []; }
     }
     
+    const loginScreen = document.getElementById("loginScreen");
+    const adminPanel = document.getElementById("adminPanel");
+    const projectForm = document.getElementById("projectForm");
+
     // 2. چک کردن وضعیت ورود هنگام لود صفحه
     if (localStorage.getItem("isLoggedIn") === "true") {
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-        renderList();
+        if (loginScreen && adminPanel) { // حفاظت
+            loginScreen.style.display = "none";
+            adminPanel.style.display = "block";
+            renderList();
+        }
     }
     
     // 3. ثبت/ویرایش پروژه
-    document.getElementById("projectForm")?.addEventListener("submit", function(e) {
-        e.preventDefault();
-        
-        const newProj = {
-            name: document.getElementById("pName").value.trim(),
-            desc: document.getElementById("pDesc").value.trim(),
-            image: document.getElementById("pImage").value.trim() || "https://placehold.co/800x600/111/00ffff?text=VIGIGAMES",
-            status: document.getElementById("pStatus").value
-        };
+    if (projectForm) { // حفاظت
+        projectForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const newProj = {
+                name: document.getElementById("pName")?.value.trim(),
+                desc: document.getElementById("pDesc")?.value.trim(),
+                image: document.getElementById("pImage")?.value.trim() || "https://placehold.co/800x600/111/00ffff?text=VIGIGAMES",
+                status: document.getElementById("pStatus")?.value
+            };
+            // ... (بقیه منطق فرم) ...
+            
+            if (!newProj.name || !newProj.desc || !newProj.image) {
+                alert("همه فیلدها اجباریه!");
+                return;
+            }
 
-        if (!newProj.name || !newProj.desc || !newProj.image) {
-            alert("همه فیلدها اجباریه!");
-            return;
-        }
+            if (editingId === null) {
+                projects.push(newProj);
+            } else {
+                projects[editingId] = newProj;
+                editingId = null;
+                document.getElementById("submitBtn").textContent = "ثبت پروژه";
+            }
 
-        if (editingId === null) {
-            projects.push(newProj);
-        } else {
-            projects[editingId] = newProj;
-            editingId = null;
-            document.getElementById("submitBtn").textContent = "ثبت پروژه";
-        }
-
-        localStorage.setItem("vigigames_projects", JSON.stringify(projects));
-        renderList();
-        
-        // پاکسازی فرم
-        document.getElementById("projectForm").reset();
-    });
+            localStorage.setItem("vigigames_projects", JSON.stringify(projects));
+            renderList();
+            
+            document.getElementById("projectForm").reset();
+        });
+    }
 
 });
