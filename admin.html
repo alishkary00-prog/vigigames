@@ -19,13 +19,14 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #0d0d1a; /* پس‌زمینه تیره */
+            background-color: #0d0d1a; 
             overflow: auto;
         }
 
         /* صفحه ورود */
         #loginScreen {
-            display: flex;
+            /* مهم: این صفحه به صورت پیش فرض با فلکس نمایش داده می‌شود */
+            display: flex; 
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -77,7 +78,6 @@
             font-size: 0.9rem;
             transition: all 0.3s;
         }
-        #togglePass:hover { color: #fff; }
 
         .btn-neon {
             background: #00ffff;
@@ -87,14 +87,10 @@
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             box-shadow: 0 0 20px #00ffff;
             transition: all 0.3s;
         }
-        .btn-neon:hover {
-            box-shadow: 0 0 35px #00ffff;
-        }
-
+        
         #errorMsg {
             color: #ff0033;
             margin-top: 15px;
@@ -104,7 +100,8 @@
 
         /* پنل اصلی مدیریت */
         #adminPanel {
-            display: none; /* در ابتدا پنهان است */
+            /* مهم: این صفحه به صورت پیش فرض مخفی است */
+            display: none; 
             width: 90%;
             max-width: 1000px;
             padding: 30px;
@@ -113,6 +110,7 @@
             box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
             border: 1px solid #00ffff44;
             animation: fadeIn 1s ease;
+            position: relative; /* برای دکمه خروج */
         }
 
         #adminPanel h2 {
@@ -123,64 +121,11 @@
             font-family: 'Orbitron', sans-serif;
             text-shadow: 0 0 10px #00ffff;
         }
-
-        /* استایل فرم پروژه‌ها */
-        #projectForm label {
-            display: block;
-            color: #00ffff;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        #projectForm input, #projectForm textarea, #projectForm select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #00ffff44;
-            border-radius: 5px;
-            background: #1a1a2e;
-            color: #e0f0ff;
-            outline: none;
-        }
-
+        
+        /* استایل فرم و لیست پروژه‌ها... */
+        #projectForm label { display: block; color: #00ffff; margin-top: 15px; margin-bottom: 5px; font-size: 0.9rem; }
+        #projectForm input, #projectForm textarea, #projectForm select { width: 100%; padding: 10px; border: 1px solid #00ffff44; border-radius: 5px; background: #1a1a2e; color: #e0f0ff; outline: none; }
         #projectForm textarea { resize: vertical; }
-
-        /* دکمه‌های عملیاتی */
-        .project-actions button {
-            margin-left: 10px;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .project-actions .edit { background: #ffaa00; color: #000; }
-        .project-actions .delete { background: #ff0033; color: #fff; }
-
-        /* لیست پروژه‌ها */
-        #projectsList {
-            margin-top: 30px;
-        }
-
-        #projectsList .item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px dashed #00ffff22;
-            transition: background 0.3s;
-        }
-        #projectsList .item:hover {
-            background: rgba(0, 255, 255, 0.05);
-        }
-
-        .item-info {
-            flex-grow: 1;
-        }
-
-        .item-info h4 {
-            color: #e0f0ff;
-        }
 
         .logout-btn {
             position: absolute;
@@ -192,7 +137,17 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: 0.3s;
         }
+        
+        #projectsList .item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px dashed #00ffff22; transition: background 0.3s; }
+        #projectsList .item:hover { background: rgba(0, 255, 255, 0.05); }
+        .item-info { flex-grow: 1; }
+        .item-info h4 { color: #e0f0ff; }
+        .project-actions button { margin-left: 10px; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; transition: 0.3s; }
+        .project-actions .edit { background: #ffaa00; color: #000; }
+        .project-actions .delete { background: #ff0033; color: #fff; }
+
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
@@ -205,7 +160,7 @@
     <div id="loginScreen">
         <h2>ورود به پنل مدیریت</h2>
         <div class="input-group">
-            <input type="password" id="adminPass" placeholder="رمز عبور" onkeypress="if(event.keyCode == 13) login()">
+            <input type="password" id="adminPass" placeholder="رمز عبور" onkeypress="if(event.keyCode == 13) login()"> 
             <button id="togglePass" onclick="togglePassword()">نمایش</button>
         </div>
         <button class="btn-neon" onclick="login()">ورود</button>
@@ -238,12 +193,11 @@
         
         <div id="projectsList">
             <h3>لیست پروژه‌های ثبت شده:</h3>
-            </div>
+        </div>
         
         <p style="text-align:center; margin-top: 40px; color:#555;">
              برای برگرداندن به صفحه اصلی: <a href="index.html" style="color:#00ffff;">بازگشت</a>
         </p>
-
     </div>
 
     <script src="admin (1).js"></script>
