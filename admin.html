@@ -1,165 +1,143 @@
-// admin.js — نسخه نهایی با حفاظت کامل DOM
-const PASSWORD = "13822";
-let projects = [];
-let editingId = null;
-
-// توابع کمکی (برای دسترسی جهانی توسط onclick)
-function togglePassword() {
-    const input = document.getElementById("adminPass");
-    const btn = document.getElementById("togglePass");
-    // حفاظت: اگر یکی از المان‌ها نباشد، کار نکند
-    if (!input || !btn) return; 
-
-    if (input.type === "password") {
-        input.type = "text";
-        btn.textContent = "مخفی";
-    } else {
-        input.type = "password";
-        btn.textContent = "نمایش";
-    }
-}
-
-function renderList() {
-    const list = document.getElementById("projectsList");
-    if (!list) return; // حفاظت
-
-    list.innerHTML = "<h3>لیست پروژه‌های ثبت شده:</h3>";
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت VIGIGAMES</title>
+    <link rel="icon" href="data:,">
     
-    projects.forEach((p, i) => {
-        // ... (بقیه منطق renderList) ...
-        const statusText = p.status === "completed" ? "تکمیل شده" :
-                           p.status === "in-progress" ? "در حال ساخت" : "لغو شده";
-        const item = document.createElement("div");
-        item.className = "item";
-        item.innerHTML = `
-            <div class="item-info">
-                <h4>${p.name} (${statusText})</h4>
-            </div>
-            <div class="project-actions">
-                <button class="edit" onclick="editProject(${i})">ویرایش</button>
-                <button class="delete" onclick="deleteProject(${i})">حذف</button>
-            </div>
-        `;
-        list.appendChild(item);
-    });
-}
-
-function login() {
-    const adminPass = document.getElementById("adminPass");
-    const loginScreen = document.getElementById("loginScreen");
-    const adminPanel = document.getElementById("adminPanel");
-    const errorMsg = document.getElementById("errorMsg");
-
-    // حفاظت: چک کردن موجودیت المان‌های حیاتی
-    if (!adminPass || !loginScreen || !adminPanel) {
-        console.error("المان‌های پنل مدیریت (loginScreen یا adminPanel) در HTML پیدا نشدند!");
-        return;
-    }
-
-    if (adminPass.value === PASSWORD) {
-        loginScreen.style.display = "none";
-        adminPanel.style.display = "block";
-        localStorage.setItem("isLoggedIn", "true");
-        renderList();
-    } else {
-        if (errorMsg) errorMsg.style.display = "block";
-    }
-}
-
-function logout() {
-    const adminPanel = document.getElementById("adminPanel");
-    const loginScreen = document.getElementById("loginScreen");
-    const adminPass = document.getElementById("adminPass");
-    const errorMsg = document.getElementById("errorMsg");
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
-    // حفاظت
-    if (!adminPanel || !loginScreen) return;
-
-    adminPanel.style.display = "none";
-    loginScreen.style.display = "flex";
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    if (adminPass) adminPass.value = "";
-    if (errorMsg) errorMsg.style.display = "none";
-    
-    localStorage.removeItem("isLoggedIn");
-}
-
-function editProject(i) {
-    editingId = i;
-    const p = projects[i];
-    // حفاظت: چک کردن موجودیت المان‌های فرم
-    if (!document.getElementById("pName") || !document.getElementById("pDesc") || !document.getElementById("pImage") || !document.getElementById("pStatus") || !document.getElementById("submitBtn")) return;
-    
-    document.getElementById("pName").value = p.name;
-    document.getElementById("pDesc").value = p.desc;
-    document.getElementById("pImage").value = p.image;
-    document.getElementById("pStatus").value = p.status;
-    document.getElementById("submitBtn").textContent = "بروزرسانی پروژه";
-}
-
-function deleteProject(i) {
-    if (confirm("واقعاً می‌خوای این پروژه حذف بشه؟")) {
-        projects.splice(i, 1);
-        localStorage.setItem("vigigames_projects", JSON.stringify(projects));
-        renderList();
-    }
-}
-
-
-// ** تضمین اجرای کد پس از بارگذاری کامل DOM **
-document.addEventListener("DOMContentLoaded", function() {
-    
-    // 1. بارگذاری پروژه‌ها
-    const saved = localStorage.getItem("vigigames_projects");
-    if (saved) {
-        try { projects = JSON.parse(saved); }
-        catch(e) { projects = []; }
-    }
-    
-    const loginScreen = document.getElementById("loginScreen");
-    const adminPanel = document.getElementById("adminPanel");
-    const projectForm = document.getElementById("projectForm");
-
-    // 2. چک کردن وضعیت ورود هنگام لود صفحه
-    if (localStorage.getItem("isLoggedIn") === "true") {
-        if (loginScreen && adminPanel) { // حفاظت
-            loginScreen.style.display = "none";
-            adminPanel.style.display = "block";
-            renderList();
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* تنظیمات اختصاصی برای صفحه مدیریت */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0d0d1a; 
+            overflow: auto;
         }
-    }
+
+        /* صفحه ورود */
+        #loginScreen {
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: rgba(10, 15, 40, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+            border: 1px solid #00ffff44;
+            animation: fadeIn 1s ease;
+        }
+
+        #loginScreen h2 {
+            color: #00ffff;
+            margin-bottom: 30px;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .input-group { position: relative; width: 100%; margin-bottom: 20px; }
+        #adminPass { /* استایل ورودی */ }
+        #togglePass { /* استایل دکمه نمایش/مخفی */ }
+
+        .btn-neon {
+            background: #00ffff;
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px #00ffff;
+            transition: all 0.3s;
+        }
+        
+        #errorMsg { color: #ff0033; margin-top: 15px; display: none; text-shadow: 0 0 10px #ff0033; }
+
+        /* پنل اصلی مدیریت */
+        #adminPanel {
+            display: none; /* پیش فرض مخفی */
+            width: 90%;
+            max-width: 1000px;
+            padding: 30px;
+            background: rgba(10, 15, 40, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
+            border: 1px solid #00ffff44;
+            position: relative;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff0033;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* ... بقیه استایل‌های پنل مدیریت ... */
+
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen">
+        <h2>ورود به پنل مدیریت</h2>
+        <div class="input-group">
+            <input type="password" id="adminPass" placeholder="رمز عبور" onkeypress="if(event.keyCode == 13) login()"> 
+            <button id="togglePass" onclick="togglePassword()">نمایش</button>
+        </div>
+        <button class="btn-neon" onclick="login()">ورود</button>
+        <div id="errorMsg">رمز عبور اشتباه است!</div>
+    </div>
+
+    <div id="adminPanel">
+        <button class="logout-btn" onclick="logout()">خروج</button>
+        <h2>مدیریت پروژه‌ها</h2>
+
+        <form id="projectForm">
+            <label for="pName">نام پروژه:</label>
+            <input type="text" id="pName" required>
+
+            <label for="pDesc">توضیحات (اختیاری):</label>
+            <textarea id="pDesc"></textarea>
+
+            <label for="pImage">آدرس عکس (URL):</label>
+            <input type="url" id="pImage" placeholder="https://..." required>
+            
+            <label for="pStatus">وضعیت:</label>
+            <select id="pStatus" required>
+                <option value="in-progress">در حال ساخت</option>
+                <option value="completed">تکمیل شده</option>
+                <option value="cancelled">لغو شده</option>
+            </select>
+
+            <button type="submit" id="submitBtn" class="btn-neon" style="margin-top: 20px;">ثبت پروژه</button>
+        </form>
+        
+        <div id="projectsList">
+            <h3>لیست پروژه‌های ثبت شده:</h3>
+        </div>
+        
+        <p style="text-align:center; margin-top: 40px; color:#555;">
+             برای برگرداندن به صفحه اصلی: <a href="index.html" style="color:#00ffff;">بازگشت</a>
+        </p>
+    </div>
+
+    <script src="admin (1).js"></script>
     
-    // 3. ثبت/ویرایش پروژه
-    if (projectForm) { // حفاظت
-        projectForm.addEventListener("submit", function(e) {
-            e.preventDefault();
-            
-            const newProj = {
-                name: document.getElementById("pName")?.value.trim(),
-                desc: document.getElementById("pDesc")?.value.trim(),
-                image: document.getElementById("pImage")?.value.trim() || "https://placehold.co/800x600/111/00ffff?text=VIGIGAMES",
-                status: document.getElementById("pStatus")?.value
-            };
-            // ... (بقیه منطق فرم) ...
-            
-            if (!newProj.name || !newProj.desc || !newProj.image) {
-                alert("همه فیلدها اجباریه!");
-                return;
-            }
-
-            if (editingId === null) {
-                projects.push(newProj);
-            } else {
-                projects[editingId] = newProj;
-                editingId = null;
-                document.getElementById("submitBtn").textContent = "ثبت پروژه";
-            }
-
-            localStorage.setItem("vigigames_projects", JSON.stringify(projects));
-            renderList();
-            
-            document.getElementById("projectForm").reset();
-        });
-    }
-
-});
+</body>
+</html>
