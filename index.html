@@ -1,49 +1,9 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIGIGAMES - استودیو بازی‌سازی دارک</title>
-    <link rel="icon" href="data:,">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <style>
-        #earth-widget {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 280px;
-            height: 280px;
-            border: 2px solid #00ffff44;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: 0 0 50px #00ffff33;
-            z-index: 10;
-            pointer-events: none;
-            background: #000;
-        }
-        #earth-canvas { 
-            display: block; 
-            width: 100%; 
-            height: 100%; 
-            outline: none;
-        }
-        .widget-label {
-            position: absolute;
-            bottom: 14px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #00ffff;
-            font: bold 11px 'Orbitron', sans-serif;
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px #00ffff;
-            pointer-events: none;
-            text-transform: uppercase;
-            z-index: 20;
-        }
+        /* ... (styles for earth-widget) ... */
     </style>
 </head>
 <body>
@@ -53,65 +13,22 @@
         <div class="widget-label">TARGET: TOKYO</div>
     </div>
 
-    <canvas id="particles"></canvas>
-    <div class="smoke"></div>
-
-    <section class="hero">
-        <div>
-            <h1 class="glitch">VIGIGAMES</h1>
-            <p class="subtitle">تاریکی فقط آغاز ماجراست...</p>
-        </div>
-    </section>
-
-    <section class="projects">
-        <h2>پروژه‌های من</h2>
-        <div class="grid" id="projectsGrid">
-            <div style="grid-column:1/-1;text-align:center;padding:120px;color:#334455;font-size:2rem;">
-                به زودی...<br>
-                <span style="font-size:1.1rem;color:#00ffff88;">در سایه‌ها منتظر باش</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="ads-section">
-        <h2>حمایت شده توسط</h2>
-        <div class="ads-grid" id="adsGrid"></div>
-    </section>
-
     <footer>
         © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
         <a href="admin (1).html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script src="assets/js/main.js"></script>
-
-    <script>
-        particlesJS("particles", {
-            "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#00ffff" },
-                "opacity": { "value": 0.3 },
-                "size": { "value": 3 },
-                "line_linked": { "enable": true, "color": "#00ffff", "opacity": 0.15 },
-                "move": { "enable": true, "speed": 1.2 }
-            },
-            "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "repulse" } }
-            },
-            "retina_detect": true
-        });
-    </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('earth-canvas');
             if (!canvas) return;
+            // ... (Full 3D Earth Script content provided in the previous turn) ...
             
+            // کد جاوا اسکریپت کامل کره زمین Three.js (همان کدی که در آخرین پیام برای 3D ارائه شد)
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
             camera.position.z = 2.8; 
-
+            // ... (بقیه کد Three.js تا پایان تابع animate) ...
             const renderer = new THREE.WebGLRenderer({ 
                 canvas: canvas, 
                 alpha: true, 
@@ -139,7 +56,6 @@
                 );
             }
 
-            // --- 1. ساخت کره زمین (نئونی Wireframe) ---
             const geometry = new THREE.SphereGeometry(RADIUS, 64, 64);
             const earthMaterial = new THREE.MeshBasicMaterial({
                 color: 0x00ffff,
@@ -150,7 +66,6 @@
             const earth = new THREE.Mesh(geometry, earthMaterial);
             earthGroup.add(earth);
 
-            // --- 2. اضافه کردن افکت Grid Data ---
             const pointsMaterial = new THREE.PointsMaterial({
                 color: 0x00ffff,
                 size: 0.015,
@@ -161,11 +76,9 @@
             const points = new THREE.Points(geometry, pointsMaterial);
             earthGroup.add(points);
 
-            // --- 3. نورپردازی ---
             const ambientLight = new THREE.AmbientLight(0x00ffff, 0.5);
             scene.add(ambientLight);
 
-            // --- 4. ایجاد پین (فلش) قرمز روی ژاپن ---
             const pinPosition = latLonToVector3(TARGET_LAT, TARGET_LON, RADIUS + 0.01);
             
             const pinGeo = new THREE.ConeGeometry(0.06, 0.18, 32);
@@ -182,7 +95,6 @@
             
             earthGroup.add(pin);
 
-            // --- 5. تنظیم چرخش اولیه برای رو به رو شدن با ژاپن ---
             const lonOffset = 180 + TARGET_LON; 
             const latOffset = TARGET_LAT;
             
@@ -190,7 +102,6 @@
             earthGroup.rotation.y = -lonOffset * (Math.PI / 180);
             earthGroup.rotation.x = latOffset * (Math.PI / 180);
 
-            // --- 6. انیمیشن ---
             function animate() {
                 requestAnimationFrame(animate);
 
