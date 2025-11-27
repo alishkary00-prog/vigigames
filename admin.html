@@ -1,206 +1,135 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت VIGIGAMES - ورود ممنوع</title>
-    <link rel="icon" href="data:,">
+// admin.js — آخرین نسخه برای VIGIGAMES Dark Theme
+const PASSWORD = "13822";
+let projects = [];
+let editingId = null;
+
+// توابع کمکی (باید در Scope جهانی باشند تا onclick کار کند)
+function togglePassword() {
+    const input = document.getElementById("adminPass");
+    const btn = document.getElementById("togglePass");
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "مخفی";
+    } else {
+        input.type = "password";
+        btn.textContent = "نمایش";
+    }
+}
+
+function renderList() {
+    const list = document.getElementById("projectsList");
+    if (!list) return; // چک کردن برای اطمینان
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    list.innerHTML = "<h3>لیست پروژه‌های ثبت شده:</h3>";
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    projects.forEach((p, i) => {
+        const statusText = p.status === "completed" ? "تکمیل شده" :
+                           p.status === "in-progress" ? "در حال ساخت" : "لغو شده";
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+            <div class="item-info">
+                <h4>${p.name} (${statusText})</h4>
+            </div>
+            <div class="project-actions">
+                <button class="edit" onclick="editProject(${i})">ویرایش</button>
+                <button class="delete" onclick="deleteProject(${i})">حذف</button>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+}
+
+function login() {
+    if (document.getElementById("adminPass").value === PASSWORD) {
+        // تغییر وضعیت نمایش
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        
+        // ذخیره وضعیت ورود در حافظه مرورگر
+        localStorage.setItem("isLoggedIn", "true");
+        renderList();
+    } else {
+        document.getElementById("errorMsg").style.display = "block";
+    }
+}
+
+function logout() {
+    // تغییر وضعیت نمایش
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("loginScreen").style.display = "flex";
     
-    <link rel="stylesheet" href="assets/css/style.css">
+    // پاکسازی
+    document.getElementById("adminPass").value = "";
+    document.getElementById("errorMsg").style.display = "none";
+    localStorage.removeItem("isLoggedIn");
+}
+
+function editProject(i) {
+    editingId = i;
+    const p = projects[i];
+    document.getElementById("pName").value = p.name;
+    document.getElementById("pDesc").value = p.desc;
+    document.getElementById("pImage").value = p.image;
+    document.getElementById("pStatus").value = p.status;
+    document.getElementById("submitBtn").textContent = "بروزرسانی پروژه";
+}
+
+function deleteProject(i) {
+    if (confirm("واقعاً می‌خوای این پروژه حذف بشه؟")) {
+        projects.splice(i, 1);
+        localStorage.setItem("vigigames_projects", JSON.stringify(projects));
+        renderList();
+    }
+}
+
+
+// ** تضمین اجرای کد پس از بارگذاری کامل DOM **
+document.addEventListener("DOMContentLoaded", function() {
     
-    <style>
-        /* تنظیمات اختصاصی برای صفحه مدیریت */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #0d0d1a; 
-            overflow: auto;
-        }
-
-        /* صفحه ورود */
-        #loginScreen {
-            /* مهم: این صفحه به صورت پیش فرض با فلکس نمایش داده می‌شود */
-            display: flex; 
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 10px;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
-            border: 1px solid #00ffff44;
-            animation: fadeIn 1s ease;
-        }
-
-        #loginScreen h2 {
-            color: #00ffff;
-            margin-bottom: 30px;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 10px #00ffff;
-        }
-
-        .input-group {
-            position: relative;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #adminPass {
-            width: 100%;
-            padding: 12px 50px 12px 15px;
-            border: 1px solid #00ffff66;
-            border-radius: 5px;
-            background: #0d0d1a;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-            transition: all 0.3s;
-        }
-
-        #togglePass {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #00ffff;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-
-        .btn-neon {
-            background: #00ffff;
-            color: #000;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 20px #00ffff;
-            transition: all 0.3s;
-        }
-        
-        #errorMsg {
-            color: #ff0033;
-            margin-top: 15px;
-            display: none;
-            text-shadow: 0 0 10px #ff0033;
-        }
-
-        /* پنل اصلی مدیریت */
-        #adminPanel {
-            /* مهم: این صفحه به صورت پیش فرض مخفی است */
-            display: none; 
-            width: 90%;
-            max-width: 1000px;
-            padding: 30px;
-            background: rgba(10, 15, 40, 0.6);
-            border-radius: 10px;
-            box-shadow: 0 0 60px rgba(0, 255, 255, 0.3);
-            border: 1px solid #00ffff44;
-            animation: fadeIn 1s ease;
-            position: relative; /* برای دکمه خروج */
-        }
-
-        #adminPanel h2 {
-            color: #00ffff;
-            border-bottom: 2px solid #00ffff66;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 10px #00ffff;
-        }
-        
-        /* استایل فرم و لیست پروژه‌ها... */
-        #projectForm label { display: block; color: #00ffff; margin-top: 15px; margin-bottom: 5px; font-size: 0.9rem; }
-        #projectForm input, #projectForm textarea, #projectForm select { width: 100%; padding: 10px; border: 1px solid #00ffff44; border-radius: 5px; background: #1a1a2e; color: #e0f0ff; outline: none; }
-        #projectForm textarea { resize: vertical; }
-
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff0033;
-            color: #fff;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        
-        #projectsList .item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px dashed #00ffff22; transition: background 0.3s; }
-        #projectsList .item:hover { background: rgba(0, 255, 255, 0.05); }
-        .item-info { flex-grow: 1; }
-        .item-info h4 { color: #e0f0ff; }
-        .project-actions button { margin-left: 10px; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; transition: 0.3s; }
-        .project-actions .edit { background: #ffaa00; color: #000; }
-        .project-actions .delete { background: #ff0033; color: #fff; }
-
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="loginScreen">
-        <h2>ورود به پنل مدیریت</h2>
-        <div class="input-group">
-            <input type="password" id="adminPass" placeholder="رمز عبور" onkeypress="if(event.keyCode == 13) login()"> 
-            <button id="togglePass" onclick="togglePassword()">نمایش</button>
-        </div>
-        <button class="btn-neon" onclick="login()">ورود</button>
-        <div id="errorMsg">رمز عبور اشتباه است!</div>
-    </div>
-
-    <div id="adminPanel">
-        <button class="logout-btn" onclick="logout()">خروج</button>
-        <h2>مدیریت پروژه‌ها</h2>
-
-        <form id="projectForm">
-            <label for="pName">نام پروژه:</label>
-            <input type="text" id="pName" required>
-
-            <label for="pDesc">توضیحات (اختیاری):</label>
-            <textarea id="pDesc"></textarea>
-
-            <label for="pImage">آدرس عکس (URL):</label>
-            <input type="url" id="pImage" placeholder="https://..." required>
-            
-            <label for="pStatus">وضعیت:</label>
-            <select id="pStatus" required>
-                <option value="in-progress">در حال ساخت</option>
-                <option value="completed">تکمیل شده</option>
-                <option value="cancelled">لغو شده</option>
-            </select>
-
-            <button type="submit" id="submitBtn" class="btn-neon" style="margin-top: 20px;">ثبت پروژه</button>
-        </form>
-        
-        <div id="projectsList">
-            <h3>لیست پروژه‌های ثبت شده:</h3>
-        </div>
-        
-        <p style="text-align:center; margin-top: 40px; color:#555;">
-             برای برگرداندن به صفحه اصلی: <a href="index.html" style="color:#00ffff;">بازگشت</a>
-        </p>
-    </div>
-
-    <script src="admin (1).js"></script>
+    // 1. بارگذاری پروژه‌ها از localStorage
+    const saved = localStorage.getItem("vigigames_projects");
+    if (saved) {
+        try { projects = JSON.parse(saved); }
+        catch(e) { projects = []; }
+    }
     
-</body>
-</html>
+    // 2. چک کردن وضعیت ورود هنگام لود صفحه
+    if (localStorage.getItem("isLoggedIn") === "true") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        renderList();
+    }
+    
+    // 3. ثبت/ویرایش پروژه
+    document.getElementById("projectForm")?.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const newProj = {
+            name: document.getElementById("pName").value.trim(),
+            desc: document.getElementById("pDesc").value.trim(),
+            image: document.getElementById("pImage").value.trim() || "https://placehold.co/800x600/111/00ffff?text=VIGIGAMES",
+            status: document.getElementById("pStatus").value
+        };
+
+        if (!newProj.name || !newProj.desc || !newProj.image) {
+            alert("همه فیلدها اجباریه!");
+            return;
+        }
+
+        if (editingId === null) {
+            projects.push(newProj);
+        } else {
+            projects[editingId] = newProj;
+            editingId = null;
+            document.getElementById("submitBtn").textContent = "ثبت پروژه";
+        }
+
+        localStorage.setItem("vigigames_projects", JSON.stringify(projects));
+        renderList();
+        
+        // پاکسازی فرم
+        document.getElementById("projectForm").reset();
+    });
+
+});
