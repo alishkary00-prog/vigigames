@@ -80,14 +80,13 @@
 
     <footer>
         © ۱۴۰۴ VIGIGAMES — تمامی حقوق محفوظ است<br>
-        <a href="admin.html" class="admin-link">ورود به پنل مدیریت</a>
+        <a href="admin (1).html" class="admin-link">ورود به پنل مدیریت</a>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="assets/js/main.js"></script>
 
     <script>
-        // پارتیکل‌ها (بدون تغییر)
         particlesJS("particles", {
             "particles": {
                 "number": { "value": 80 },
@@ -109,7 +108,6 @@
             const canvas = document.getElementById('earth-canvas');
             if (!canvas) return;
             
-            // تنظیمات اولیه
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
             camera.position.z = 2.8; 
@@ -121,18 +119,15 @@
             });
             renderer.setSize(280, 280);
             renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setClearColor(0x000000, 0); // پس‌زمینه کاملاً شفاف
+            renderer.setClearColor(0x000000, 0);
 
             const earthGroup = new THREE.Group();
             scene.add(earthGroup);
 
-            // --- توابع کمکی تبدیل مختصات ---
-            // مختصات توکیو: Lat 35.6° N, Lon 139.6° E
             const TARGET_LAT = 35.6;
             const TARGET_LON = 139.6;
             const RADIUS = 1;
 
-            // تبدیل مختصات جغرافیایی به بردار سه بعدی (Vector3)
             function latLonToVector3(lat, lon, radius) {
                 const phi = (90 - lat) * (Math.PI / 180);
                 const theta = (lon + 90) * (Math.PI / 180); 
@@ -148,7 +143,7 @@
             const geometry = new THREE.SphereGeometry(RADIUS, 64, 64);
             const earthMaterial = new THREE.MeshBasicMaterial({
                 color: 0x00ffff,
-                wireframe: true, // نمایش شبکه سیم‌کشی نئونی
+                wireframe: true,
                 transparent: true,
                 opacity: 0.3
             });
@@ -166,50 +161,41 @@
             const points = new THREE.Points(geometry, pointsMaterial);
             earthGroup.add(points);
 
-            // --- 3. نورپردازی (برای درخشش نئونی) ---
+            // --- 3. نورپردازی ---
             const ambientLight = new THREE.AmbientLight(0x00ffff, 0.5);
             scene.add(ambientLight);
 
             // --- 4. ایجاد پین (فلش) قرمز روی ژاپن ---
             const pinPosition = latLonToVector3(TARGET_LAT, TARGET_LON, RADIUS + 0.01);
             
-            // ساخت شکل پین (یک مخروط)
             const pinGeo = new THREE.ConeGeometry(0.06, 0.18, 32);
-            pinGeo.rotateX(Math.PI / 2); // چرخش برای اینکه نوکش در راستای بردار قرار بگیرد
+            pinGeo.rotateX(Math.PI / 2);
 
             const pinMat = new THREE.MeshBasicMaterial({ 
                 color: 0xff0033
             });
             const pin = new THREE.Mesh(pinGeo, pinMat);
 
-            // تنظیم موقعیت و چرخش پین
             pin.position.copy(pinPosition);
-            pin.lookAt(0, 0, 0); // چرخش به سمت مرکز زمین
-            pin.rotateZ(Math.PI); // چرخش 180 درجه برای اینکه از زمین بیرون بیاید
+            pin.lookAt(0, 0, 0);
+            pin.rotateZ(Math.PI);
             
             earthGroup.add(pin);
 
-
             // --- 5. تنظیم چرخش اولیه برای رو به رو شدن با ژاپن ---
-            // محاسبه جهت‌گیری دوربین برای نگاه کردن به پین
             const lonOffset = 180 + TARGET_LON; 
             const latOffset = TARGET_LAT;
             
-            // تنظیم چرخش گروه برای مرکز قرار گرفتن ژاپن (بر اساس محاسبه تبدیل مختصات)
-            // Three.js به طور پیش فرض از محور Y برای بالا/پایین استفاده می‌کند، اما تکسچرها از سمت Z شروع می‌شوند.
             earthGroup.rotation.order = 'YXZ';
             earthGroup.rotation.y = -lonOffset * (Math.PI / 180);
             earthGroup.rotation.x = latOffset * (Math.PI / 180);
-
 
             // --- 6. انیمیشن ---
             function animate() {
                 requestAnimationFrame(animate);
 
-                // چرخش بسیار آهسته کل مجموعه برای دینامیک بودن
                 earthGroup.rotation.y += 0.0008; 
 
-                // انیمیشن پالس (ضربان) پین قرمز
                 const scale = 1 + Math.sin(Date.now() * 0.006) * 0.25;
                 pin.scale.set(scale, scale, scale);
                 
