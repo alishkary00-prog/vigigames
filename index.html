@@ -21,24 +21,12 @@
             z-index: 10;
             pointer-events: none;
         }
-        #earth-canvas { display: block; border-radius: 50%; width: 100%; height: 100%; }
-        /* فلش روی نقشه توسط خود جاوا اسکریپت رسم می‌شود و این المان حذف شده */
-        /* .japan-pin {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            font-size: 32px;
-            color: #ff0033;
-            text-shadow: 0 0 25px #ff0033;
-            animation: pulse 1.8s infinite;
-            pointer-events: none;
-            z-index: 20;
-            transform: translate(-50%, -50%);
+        #earth-canvas { 
+            display: block; 
+            border-radius: 50%; 
+            width: 100%; 
+            height: 100%; 
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
-        } */
         .widget-label {
             position: absolute;
             bottom: 14px;
@@ -94,7 +82,7 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-        // پارتیکل‌ها
+        // تنظیمات پارتیکل‌ها (بدون تغییر)
         particlesJS("particles", {
             "particles": {
                 "number": { "value": 80 },
@@ -114,7 +102,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('earth-canvas');
+            if (!canvas) return;
+            
             const ctx = canvas.getContext('2d');
+            // تنظیم اندازه داخلی کانواس برای کیفیت بالا
             canvas.width = 280;
             canvas.height = 280;
 
@@ -122,71 +113,85 @@
             const centerY = canvas.height / 2;
             const radius = 120;
 
-            // مختصات توکیو (مرکز نقشه)
-            const tokyoX = centerX;
-            const tokyoY = centerY;
-
-            // مختصات تقریبی ژاپن (مجموعه نقاط چندضلعی)
-            // این مختصات تقریبی است و نسبت به مرکز (توکیو) تنظیم شده‌اند.
-            const japanPath = [
-                { x: tokyoX - 10, y: tokyoY - 50 }, // شمال
-                { x: tokyoX + 10, y: tokyoY - 45 },
-                { x: tokyoX + 25, y: tokyoY - 15 },
-                { x: tokyoX + 20, y: tokyoY + 30 }, // جنوب شرق
-                { x: tokyoX - 5, y: tokyoY + 45 },
-                { x: tokyoX - 30, y: tokyoY + 30 }, // جنوب غرب
-                { x: tokyoX - 25, y: tokyoY - 20 }
-            ];
-
-            function drawPin(x, y, size, color, shadowColor, shadowBlur) {
-                // نقطه پالس‌دار
-                const pulseSize = size * (1 + Math.sin(Date.now() * 0.006) * 0.5);
-                ctx.fillStyle = color;
-                ctx.shadowColor = shadowColor;
-                ctx.shadowBlur = shadowBlur;
-                ctx.beginPath();
-                ctx.arc(x, y, pulseSize, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
-
             function drawEarth() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // گرادیان نئونی با چرخش
+                // 1. اقیانوس (گرادیان آبی نئونی)
                 const time = Date.now() * 0.0003;
-                const gradX = centerX + Math.cos(time) * 25;
-                const gradY = centerY + Math.sin(time) * 15;
+                // حرکت دادن هایلایت برای زنده بودن کره
+                const gradX = centerX + Math.cos(time) * 30;
+                const gradY = centerY + Math.sin(time) * 20;
+                
                 const gradient = ctx.createRadialGradient(gradX, gradY, 0, centerX, centerY, radius);
-                gradient.addColorStop(0, '#00ccff');  // مرکز نئونی
-                gradient.addColorStop(0.5, '#004488');  // وسط آبی
-                gradient.addColorStop(1, '#001122');  // لبه تیره
+                gradient.addColorStop(0, '#00ccff');   // مرکز روشن
+                gradient.addColorStop(0.4, '#004488'); // آبی متوسط
+                gradient.addColorStop(1, '#000510');   // لبه‌های تاریک
 
-                // کره زمین
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // حلقه نئونی دور کره
+                // 2. خط نئونی دور کره
                 ctx.strokeStyle = '#00ffff';
                 ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius + 3, 0, Math.PI * 2);
+                ctx.shadowColor = '#00ffff';
+                ctx.shadowBlur = 10;
                 ctx.stroke();
+                ctx.shadowBlur = 0; // ریست کردن سایه برای نقشه
 
-                // رسم نقشه ژاپن (شکل چندضلعی)
-                ctx.fillStyle = '#cc4400'; // رنگ جزیره
+                // 3. رسم نقشه ژاپن (شبیه‌سازی با منحنی‌های دقیق)
+                // رنگ جزیره: کمی تیره‌تر از آب برای کنتراست
+                ctx.fillStyle = '#0a0a20'; 
+                
+                ctx.save();
+                // تنظیم موقعیت نقشه در وسط کره
+                ctx.translate(centerX - 10, centerY - 20); 
+                ctx.rotate(0.2); // کمی چرخش برای طبیعی شدن زاویه نقشه ژاپن
+
                 ctx.beginPath();
-                ctx.moveTo(japanPath[0].x, japanPath[0].y);
-                for (let i = 1; i < japanPath.length; i++) {
-                    ctx.lineTo(japanPath[i].x, japanPath[i].y);
-                }
+                // هونشو (جزیره اصلی - منحنی کمانی)
+                ctx.moveTo(0, -40);
+                ctx.bezierCurveTo(20, -30, 40, 0, 10, 50); 
+                ctx.bezierCurveTo(-10, 40, -20, 0, 0, -40);
+                
+                // هوکایدو (جزیره شمالی)
+                ctx.moveTo(25, -55);
+                ctx.arc(25, -55, 10, 0, Math.PI*2);
+
+                // کیوشو (جزیره جنوبی)
+                ctx.moveTo(-15, 65);
+                ctx.arc(-15, 65, 7, 0, Math.PI*2);
+                
+                ctx.fill();
+                ctx.restore();
+
+                // 4. رسم فلش قرمز (▼) روی توکیو
+                // موقعیت حدودی توکیو روی این نقشه فرضی
+                const pinX = centerX + 10;
+                const pinY = centerY - 10;
+                
+                // افکت پالس (ضربان قلب)
+                const pulseScale = 1 + Math.sin(Date.now() * 0.008) * 0.2;
+
+                ctx.save();
+                ctx.translate(pinX, pinY);
+                ctx.scale(pulseScale, pulseScale);
+                
+                // سایه قرمز برای درخشش
+                ctx.shadowColor = '#ff0033';
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = '#ff0033';
+
+                // رسم مثلث برعکس (Pin)
+                ctx.beginPath();
+                ctx.moveTo(-6, -10); // گوشه بالا چپ
+                ctx.lineTo(6, -10);  // گوشه بالا راست
+                ctx.lineTo(0, 2);    // نوک تیز پایین
                 ctx.closePath();
                 ctx.fill();
-
-                // رسم فلش (Pin) پالس‌دار روی توکیو (مرکز نقشه)
-                drawPin(tokyoX, tokyoY, 4, '#ff0033', '#ff0033', 15);
+                
+                ctx.restore();
             }
 
             function animate() {
